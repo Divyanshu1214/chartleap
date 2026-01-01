@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal Graph Plotter - Plot Equations Instantly Online | chartleap</title>
+    <meta name="description" content="Kisi bhi math equation (y=x², circle, polar, parametric) ko instantly plot karein hamare fast aur interactive graph plotter ke saath.">
+    <meta name="keywords" content="online graph plotter, plot math equations, parametric grapher, universal function plotter chartleap">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="royal.css">
+    <link rel="icon" type="image/jpeg" href="logo.jpeg">
+    <link rel="apple-touch-icon" href="logo.jpeg">
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/13.2.0/math.js"></script>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="logo.jpeg" alt="chartleap Logo">
+            <span>chartleap</span>
+        </div>
+        <nav>
+            <a href="index.html"><button class="nav-btn">🏠 Home</button></a>
+            <a href="graph.html"><button class="nav-btn">📈 Graph Plotter</button></a>
+            <a href="simulations.html"><button class="nav-btn">🔬 Simulations</button></a>
+            <a href="Notes.html"><button class="nav-btn">📝 Notes</button></a>
+            <a href="Test.html"><button class="nav-btn">📋 Test</button></a>
+        </nav>
+    </header>
+    <main>
+        <h1>Universal Graph Plotter</h1>
+        <p>Enter equations: y=x², x²+y²=25, r=cos(3θ), x=cos(t);y=sin(t)</p>
+        
+        <div id="equation-inputs">
+            <input type="text" class="equation" placeholder="y = x^2">
+            <input type="text" class="equation" placeholder="x^2 + y^2 = 25">
+            <input type="text" class="equation" placeholder="r = 2*sin(3*theta)">
+        </div>
+        
+        <button id="add-equation">+ Add Equation</button>
+        <button id="plot-graph">Plot Graph</button>
+        <button id="clear-graph">Clear</button>
+        
+        <div id="graph" class="animate-fade-in"></div>
+        <p id="error-message" style="color: red; min-height: 24px;"></p>
+    </main>
+    <footer>
+        <p>© 2025 chartleap</p>
+    </footer>
+    <!-- Floating Feedback Button -->
+    <div class="feedback-float" id="feedback-float">
+        Feedback
+    </div>
+    <!-- Feedback Popup Modal -->
+    <div class="feedback-modal" id="feedback-modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-modal">×</span>
+            <h2>chartleap को रेटिंग दें</h2>
+            <div class="star-rating">
+                <span class="star" data-value="1">★</span>
+                <span class="star" data-value="2">★</span>
+                <span class="star" data-value="3">★</span>
+                <span class="star" data-value="4">★</span>
+                <span class="star" data-value="5">★</span>
+            </div>
+            <input type="text" id="feedback-name" placeholder="आपका नाम (वैकल्पिक)">
+            <textarea id="feedback-message" rows="4" placeholder="कोई सुझाव या तारीफ? 😊"></textarea>
+            <button id="submit-feedback">Submit Feedback</button>
+            <p id="feedback-status"></p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

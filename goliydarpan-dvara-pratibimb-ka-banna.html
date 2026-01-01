@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spherical Mirror 3D Simulation - Concave & Convex Image Formation | chartleap</title>
+    <meta name="description" content="Goliya darpan (concave aur convex mirror) se pratibimb (image) kaise banta hai, ise 3D mein seekhein. Object ki position badal kar image properties check karein.">
+    <meta name="keywords" content="concave mirror image formation 3d, goliya darpan simulation, spherical mirror physics, ray diagram 3d">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Inter font */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        #canvas-container {
+            width: 100%;
+            height: 60vh;
+            background: #e0e7ff; /* indigo-100 */
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: relative;
+        }
+        canvas {
+            display: block;
+        }
+        /* Custom radio button styles */
+        .radio-label {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            margin: 0.25rem;
+            border: 2px solid transparent;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            background-color: #f1f5f9; /* slate-100 */
+        }
+        .radio-label:hover {
+            background-color: #e2e8f0; /* slate-200 */
+        }
+        input[type="radio"]:checked + .radio-label {
+            background-color: #3b82f6; /* blue-500 */
+            color: white;
+            border-color: #2563eb; /* blue-700 */
+        }
+        input[type="radio"] {
+            display: none; /* Hide default radio */
+        }
+        /* Slider styles */
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            background: #d1d5db; /* gray-300 */
+            border-radius: 5px;
+            outline: none;
+            opacity: 0.7;
+            transition: opacity .2s;
+        }
+        input[type="range"]:hover {
+            opacity: 1;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #3b82f6; /* blue-500 */
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #3b82f6; /* blue-500 */
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        /* 3D Labels */
+        .label {
+            position: absolute;
+            color: #1e293b;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-weight: bold;
+            font-size: 14px;
+            pointer-events: none; /* Allows clicking through */
+            transform: translateX(-50%) translateY(-50%); /* Center the label */
+        }
+    </style>
+    <!-- Three.js (3D Library) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- OrbitControls (for camera movement) -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body class="bg-slate-100 flex flex-col items-center min-h-screen p-4">
+
+    <div class="w-full max-w-6xl mx-auto">
+        <h1 class="text-2xl md:text-3xl font-bold text-center text-slate-800 mb-4">
+            गोलीय दर्पण 3D सिमुलेशन
+        </h1>
+
+        <!-- Controls Section -->
+        <div class="bg-white p-4 rounded-lg shadow-md w-full mb-4">
+            <div class="flex flex-col md:flex-row justify-between gap-6">
+                <!-- Mirror Type Control -->
+                <div class="w-full md:w-1/3">
+                    <h2 class="text-lg font-semibold mb-2 text-slate-700">1. दर्पण चुनें</h2>
+                    <div class="flex">
+                        <input type="radio" id="concave" name="mirrorType" value="concave" checked onchange="updateSimulation()">
+                        <label for="concave" class="radio-label">अवतल (Concave)</label>
+                        <input type="radio" id="convex" name="mirrorType" value="convex" onchange="updateSimulation()">
+                        <label for="convex" class="radio-label">उत्तल (Convex)</label>
+                    </div>
+                </div>
+                <!-- Object Position Control (Slider) -->
+                <div class="w-full md:w-2/3">
+                    <h2 class="text-lg font-semibold mb-2 text-slate-700">2. वस्तु की स्थिति (Slider)</h2>
+                    <input type="range" min="0" max="1000" value="200" class="w-full" id="objectSlider" oninput="updateSimulation()">
+                    <div class="flex justify-between text-sm font-medium text-slate-600 px-1">
+                        <span>दूर (Far)</span>
+                        <span id="label-C">C</span>
+                        <span id="label-F">F</span>
+                        <span>P (पास)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3D Canvas Container -->
+        <div id="canvas-container">
+            <!-- 3D Labels will be injected here -->
+            <div id="label-P" class="label">P</div>
+            <div id="label-F-point" class="label">F</div>
+            <div id="label-C-point" class="label">C</div>
+            <div id="label-obj" class="label">वस्तु</div>
+            <div id="label-img" class="label">प्रतिबिंब</div>
+        </div>
+
+        <!-- Image Properties Display -->
+        <div class="bg-white p-4 rounded-lg shadow-md w-full mt-4">
+            <h2 class="text-xl font-semibold mb-2 text-slate-800">प्रतिबिंब की प्रकृति (Image Properties)</h2>
+            <div id="imageProperties" class="text-lg text-slate-700 space-y-1">
+                <p><strong>स्थिति (Position):</strong> <span id="img-pos">--</span></p>
+                <p><strong>आकार (Size):</strong> <span id="img-size">--</span></p>
+                <p><strong>प्रकृति (Nature):</strong> <span id="img-nature">--</span></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Global 3D Variables ---
+        let scene, camera, renderer, controls;
+        let mirror, objectArrow, imageArrow, principalAxis;
+        let pPoint, fPoint, cPoint;
+        let ray1Incident, ray1Reflected, ray2Incident, ray2Reflected;
+        let ray1Virtual, ray2Virtual;
+        
+        // --- DOM Elements ---
+        const container = document.getElementById('canvas-container');
+        const slider = document.getElementById('objectSlider');
+        const imgPos = document.getElementById('img-pos');
+        const imgSize = document.getElementById('img-size');
+        const imgNature = document.getElementById('img-nature');
+        
+        // --- Labels ---
+        const labelP = document.getElementById('label-P');
+        const labelF = document.getElementById('label-F-point');
+        const labelC = document.getElementById('label-C-point');
+        const labelObj = document.getElementById('label-obj');
+        const labelImg = document.getElementById('label-img');
+        const labelCSlider = document.getElementById('label-C');
+        const labelFSlider = document.getElementById('label-F');
+
+        // --- Physics Constants ---
+        const f_val = 30; // Focal length in 3D units
+        const objectHeight = 10;
+        const mirrorRadius = 2 * f_val;
+        const mirrorAperture = 0.8; // Angle for the spherical cap
+        
+        // --- Materials ---
+        const objMat = new THREE.LineBasicMaterial({ color: 0xa855f7 }); // purple-500
+        const imgMat = new THREE.LineBasicMaterial({ color: 0xf97316 }); // orange-500
+        const imgMatVirtual = new THREE.LineDashedMaterial({ color: 0xf97316, gapSize: 1, dashSize: 1, transparent: true, opacity: 0.7 });
+        const ray1Mat = new THREE.LineBasicMaterial({ color: 0xef4444 }); // red-500
+        const ray1MatVirtual = new THREE.LineDashedMaterial({ color: 0xef4444, gapSize: 1, dashSize: 1, transparent: true, opacity: 0.7 });
+        const ray2Mat = new THREE.LineBasicMaterial({ color: 0x3b82f6 }); // blue-500
+        const ray2MatVirtual = new THREE.LineDashedMaterial({ color: 0x3b82f6, gapSize: 1, dashSize: 1, transparent: true, opacity: 0.7 });
+        const mirrorMat = new THREE.MeshPhongMaterial({ 
+            color: 0xbfdbfe, // blue-200
+            shininess: 100, 
+            side: THREE.DoubleSide,
+            transparent: true,
+            opacity: 0.8
+        });
+        const pointMat = new THREE.MeshBasicMaterial({ color: 0x1e293b }); // slate-800
+        
+        // --- Helper: Convert 3D pos to 2D screen pos ---
+        function toScreenPosition(vec3, cam) {
+            const vector = vec3.clone();
+            vector.project(cam);
+            
+            const x = (vector.x * 0.5 + 0.5) * container.clientWidth;
+            const y = (vector.y * -0.5 + 0.5) * container.clientHeight;
+            
+            return { x, y };
+        }
+        
+        // --- Initialize 3D Scene ---
+        function init() {
+            // Scene
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xf1f5f9); // slate-100
+
+            // Camera
+            const aspect = container.clientWidth / container.clientHeight;
+            camera = new THREE.PerspectiveCamera(50, aspect, 0.1, 1000);
+            camera.position.set(0, 40, 100);
+            camera.lookAt(0, 0, 0);
+
+            // Renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            container.appendChild(renderer.domElement);
+
+            // Controls
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.1;
+
+            // Lights
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(50, 50, 50);
+            scene.add(directionalLight);
+
+            // --- Create Initial Objects ---
+            
+            // Principal Axis
+            const axisGeom = new THREE.CylinderGeometry(0.2, 0.2, 200, 8);
+            const axisMat = new THREE.MeshBasicMaterial({ color: 0x64748b }); // slate-500
+            principalAxis = new THREE.Mesh(axisGeom, axisMat);
+            principalAxis.rotation.z = Math.PI / 2;
+            scene.add(principalAxis);
+            
+            // Points (P, F, C)
+            const pointGeom = new THREE.SphereGeometry(0.5, 16, 16);
+            pPoint = new THREE.Mesh(pointGeom, pointMat);
+            fPoint = new THREE.Mesh(pointGeom, pointMat);
+            cPoint = new THREE.Mesh(pointGeom, pointMat);
+            scene.add(pPoint);
+            scene.add(fPoint);
+            scene.add(cPoint);
+
+            // Mirror
+            const mirrorGeom = new THREE.SphereGeometry(mirrorRadius, 64, 32, 0, Math.PI * 2, 0, mirrorAperture);
+            mirror = new THREE.Mesh(mirrorGeom, mirrorMat);
+            scene.add(mirror);
+            
+            // Object Arrow
+            objectArrow = new THREE.ArrowHelper(new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 0, 0), objectHeight, 0xa855f7, 2, 2);
+            scene.add(objectArrow);
+
+            // Image Arrow
+            imageArrow = new THREE.ArrowHelper(new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 0, 0), 1, 0xf97316, 2, 2);
+            scene.add(imageArrow);
+
+            // Rays (initialize as empty lines)
+            ray1Incident = createLine(ray1Mat);
+            ray1Reflected = createLine(ray1Mat);
+            ray1Virtual = createLine(ray1MatVirtual);
+            
+            ray2Incident = createLine(ray2Mat);
+            ray2Reflected = createLine(ray2Mat);
+            ray2Virtual = createLine(ray2MatVirtual);
+
+            // Start animation loop
+            animate();
+            // Initial calculation
+            updateSimulation();
+            // Handle window resize
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        // --- Helper to create a line ---
+        function createLine(material) {
+            const geom = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
+            const line = new THREE.Line(geom, material);
+            if (material.isLineDashedMaterial) {
+                line.computeLineDistances();
+            }
+            scene.add(line);
+            return line;
+        }
+
+        // --- Update line geometry ---
+        function updateLine(line, p1, p2) {
+            const positions = line.geometry.attributes.position;
+            positions.setXYZ(0, p1.x, p1.y, p1.z);
+            positions.setXYZ(1, p2.x, p2.y, p2.z);
+            positions.needsUpdate = true;
+            if (line.material.isLineDashedMaterial) {
+                line.computeLineDistances();
+            }
+        }
+        
+        // --- Set Arrow Material (for virtual) ---
+        function setArrowMaterial(arrow, material) {
+            arrow.line.material = material;
+            arrow.cone.material = material.clone(); // Use clone for cone
+            if (material.isLineDashedMaterial) {
+                arrow.line.computeLineDistances();
+            }
+            arrow.line.material.needsUpdate = true;
+            arrow.cone.material.needsUpdate = true;
+        }
+
+        // --- Animation Loop ---
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+            
+            // Update 2D Labels
+            const pVec = toScreenPosition(pPoint.position, camera);
+            labelP.style.left = `${pVec.x}px`;
+            labelP.style.top = `${pVec.y + 15}px`;
+
+            const fVec = toScreenPosition(fPoint.position, camera);
+            labelF.style.left = `${fVec.x}px`;
+            labelF.style.top = `${fVec.y + 15}px`;
+            
+            const cVec = toScreenPosition(cPoint.position, camera);
+            labelC.style.left = `${cVec.x}px`;
+            labelC.style.top = `${cVec.y + 15}px`;
+            
+            const objTop = objectArrow.position.clone().add(objectArrow.up.clone().multiplyScalar(objectArrow.length));
+            const objVec = toScreenPosition(objTop, camera);
+            labelObj.style.left = `${objVec.x}px`;
+            labelObj.style.top = `${objVec.y - 15}px`;
+            
+            const imgTop = imageArrow.position.clone().add(imageArrow.up.clone().multiplyScalar(imageArrow.length));
+            const imgVec = toScreenPosition(imgTop, camera);
+            labelImg.style.left = `${imgVec.x}px`;
+            labelImg.style.top = `${imgVec.y - 15}px`;
+            labelImg.style.display = imageArrow.visible ? 'block' : 'none';
+        }
+
+        // --- Handle Window Resize ---
+        function onWindowResize() {
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        }
+
+        // --- Main Simulation Update Function ---
+        function updateSimulation() {
+            // 1. Read Controls
+            const mirrorType = document.querySelector('input[name="mirrorType"]:checked').value;
+            const sliderVal = slider.value; // 0 to 1000
+
+            // 2. Map Slider to Object Position (u_val)
+            const u_min = -3.5 * f_val; // Far
+            const u_max = -0.1 * f_val; // Close to P
+            const u_val = u_min + (sliderVal / 1000) * (u_max - u_min); // u_val is always negative
+
+            // 3. Set Mirror & Physics Parameters
+            const f_calc = (mirrorType === 'concave') ? -f_val : f_val;
+            const c_calc = 2 * f_calc;
+
+            // 4. Update Mirror Geometry
+            if (mirrorType === 'concave') {
+                mirror.position.x = -mirrorRadius;
+                mirror.rotation.z = -Math.PI / 2;
+            } else {
+                mirror.position.x = mirrorRadius;
+                mirror.rotation.z = Math.PI / 2;
+            }
+            
+            // 5. Update F and C points
+            fPoint.position.x = f_calc;
+            cPoint.position.x = c_calc;
+            labelF.style.display = 'block';
+            labelC.style.display = 'block';
+            labelFSlider.style.display = 'block';
+            labelCSlider.style.display = 'block';
+            
+            if(mirrorType === 'convex') {
+                // Hide C and F labels for convex slider
+                labelFSlider.style.display = 'none';
+                labelCSlider.style.display = 'none';
+            }
+
+
+            // 6. Update Object Arrow
+            objectArrow.position.set(u_val, 0, 0);
+            objectArrow.setLength(objectHeight);
+
+            // 7. Calculate Image (Mirror Formula)
+            let v_val, m_val, h_img;
+            let isVirtual = false;
+            let isFinite = true;
+
+            if (Math.abs(u_val - f_calc) < 0.5) { // At Focus
+                v_val = Infinity;
+                m_val = Infinity;
+                h_img = Infinity;
+                isFinite = false;
+            } else {
+                v_val = (u_val * f_calc) / (u_val - f_calc);
+                m_val = -v_val / u_val;
+                h_img = m_val * objectHeight;
+            }
+
+            isVirtual = (v_val > 0);
+            
+            // 8. Update Image Arrow
+            if (isFinite) {
+                imageArrow.visible = true;
+                imageArrow.position.set(v_val, 0, 0);
+                imageArrow.setLength(Math.abs(h_img), 2, 2);
+                imageArrow.setDirection(h_img > 0 ? new THREE.Vector3(0, 1, 0) : new THREE.Vector3(0, -1, 0));
+                
+                // Set material (solid or dashed)
+                setArrowMaterial(imageArrow, isVirtual ? imgMatVirtual : imgMat);
+            } else {
+                imageArrow.visible = false;
+            }
+
+            // 9. Update Rays
+            const objTop = new THREE.Vector3(u_val, objectHeight, 0);
+            const pTop = new THREE.Vector3(0, 0, 0); // Pole
+            const mTop = new THREE.Vector3(0, objectHeight, 0); // Mirror intersect for parallel ray
+            const fTop = new THREE.Vector3(f_calc, 0, 0);
+            const imgTop = new THREE.Vector3(v_val, h_img, 0);
+            
+            // Hide all rays first
+            [ray1Incident, ray1Reflected, ray1Virtual, ray2Incident, ray2Reflected, ray2Virtual].forEach(r => r.visible = false);
+
+            if (isFinite) {
+                // --- Ray 1 (Red: Parallel -> F) ---
+                ray1Incident.visible = true;
+                updateLine(ray1Incident, objTop, mTop);
+                
+                ray1Reflected.visible = !isVirtual;
+                updateLine(ray1Reflected, mTop, imgTop);
+
+                ray1Virtual.visible = isVirtual;
+                updateLine(ray1Virtual, mTop, imgTop); // Apparent reflected ray
+                // Dotted line from F
+                updateLine(createLine(ray1MatVirtual), fTop, mTop); // Helper line
+                scene.children[scene.children.length - 1].visible = isVirtual; // Show last added line
+                
+                // --- Ray 2 (Blue: Pole -> Pole) ---
+                ray2Incident.visible = true;
+                updateLine(ray2Incident, objTop, pTop);
+                
+                ray2Reflected.visible = true; // Always visible
+                updateLine(ray2Reflected, pTop, imgTop);
+                // Manually set material
+                ray2Reflected.material = isVirtual ? ray2MatVirtual : ray2Mat;
+                if(isVirtual) ray2Reflected.computeLineDistances();
+
+            } else {
+                // At Focus (rays go parallel)
+                ray1Incident.visible = true;
+                updateLine(ray1Incident, objTop, mTop);
+                ray1Reflected.visible = true;
+                updateLine(ray1Reflected, mTop, new THREE.Vector3(-100, objectHeight, 0)); // To infinity
+            }
+
+
+            // 10. Update Properties Text
+            updateImageProperties(u_val, v_val, m_val, f_calc, mirrorType);
+        }
+        
+        // --- Update Text Display ---
+        function updateImageProperties(u, v, m, f, type) {
+            let pos, size, nature;
+            const f_abs = Math.abs(f);
+
+            // Nature
+            if (!isFinite(v)) {
+                nature = 'वास्तविक और उल्टा (Real & Inverted)';
+            } else {
+                nature = v > 0 ? 'आभासी और सीधा (Virtual & Erect)' : 'वास्तविक और उल्टा (Real & Inverted)';
+            }
+
+            // Size
+            const m_abs = Math.abs(m);
+            if (!isFinite(m)) {
+                size = 'अत्यधिक आवर्धित (Highly Magnified)';
+            } else if (m_abs < 0.95) size = 'छोटा (Diminished)';
+            else if (m_abs > 1.05) size = 'बड़ा (Magnified)';
+            else size = 'समान आकार (Same Size)';
+
+            // Position
+            if (!isFinite(v)) {
+                pos = 'अनंत पर (At Infinity)';
+            } else if (type === 'concave') {
+                if (v > 0) pos = 'दर्पण के पीछे (Behind mirror)';
+                else if (Math.abs(u) > 2 * f_abs + 1) pos = 'C और F के बीच (Between C & F)';
+                else if (Math.abs(v) > 2 * f_abs + 1) pos = 'C से परे (Beyond C)';
+                else if (Math.abs(v - 2*f) < 1) pos = 'C पर (At C)';
+                else pos = '...';
+            } else { // Convex
+                pos = 'P और F के बीच (Between P & F)';
+            }
+            
+            // Override for specific points
+            if (type === 'concave') {
+                 if (Math.abs(u - f) < 0.5) pos = 'अनंत पर (At Infinity)';
+                 else if (Math.abs(u - 2*f) < 0.5) pos = 'C पर (At C)';
+            }
+
+            imgPos.textContent = pos;
+            imgSize.textContent = size;
+            imgNature.textContent = nature;
+        }
+
+        // --- Start Everything ---
+        init();
+
+    </script>
+</body>
+</html>

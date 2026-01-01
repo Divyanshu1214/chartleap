@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Dipole in Uniform Electric Field 3D Simulation - Torque & Angle | chartleap</title>
+    <meta name="description" content="Ek dipole par lagne wale torque (τ) aur uski orientation ko uniform electric field mein 3D animation ke saath seekhein.">
+    <meta name="keywords" content="electric dipole simulation, torque on dipole 3d, dipole orientation electric field, physics 12th class simulation">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            color: #fff;
+            background-color: #1a1a1a;
+        }
+        canvas {
+            display: block;
+        }
+        #info-panel {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 15px;
+            background-color: rgba(0, 0, 0, 0.6);
+            border-radius: 10px;
+            width: 280px;
+            font-size: 14px;
+            line-height: 1.6;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        #info-panel h2 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            padding-bottom: 5px;
+        }
+        #info-panel div {
+            margin-bottom: 5px;
+        }
+        #title {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(0,0,0,0.5);
+            pointer-events: none; /* Allows clicking through the title */
+        }
+    </style>
+</head>
+<body>
+    <div id="title">Dipole in a Uniform Electric Field</div>
+    <div id="info-panel">
+        <h2>Real-time Data</h2>
+        <div id="e-field-info"></div>
+        <div id="p-moment-info"></div>
+        <div id="angle-info"></div>
+        <div id="torque-info"></div>
+    </div>
+    <div id="container"></div>
+
+    <!-- Three.js and helper libraries CDN links -->
+    <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.157.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.157.0/examples/jsm/"
+        }
+    }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+
+        // Global variables
+        let scene, camera, renderer, controls, gui;
+        let dipoleGroup, electricFieldGroup, torqueIndicator;
+        let p_vector_helper;
+        let animationRunning = false;
+        const clock = new THREE.Clock();
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+
+        // Physics and UI parameters
+        const params = {
+            E_Strength: 2.0,
+            E_Direction: 'X',
+            charge: 1.0,
+            length: 2.0,
+            initialAngle: 0.0,
+            startAnimation: () => {
+                animationRunning = !animationRunning;
+                const controller = gui.controllers.find(c => c.property === 'startAnimation');
+                if (controller) {
+                    controller.name(animationRunning ? 'Stop Animation' : 'Start Animation');
+                }
+            },
+            resetDipole: () => {
+                setDipoleAngleBySlider(0); // Reset angle to 0
+                params.initialAngle = 0.0; // Reset parameter
+                // Manually update the GUI slider to reflect the change
+                const angleController = gui.controllers.find(c => c.property === 'initialAngle');
+                if (angleController) {
+                    angleController.updateDisplay();
+                }
+            }
+        };
+
+        // DOM Elements
+        const eFieldInfo = document.getElementById('e-field-info');
+        const pMomentInfo = document.getElementById('p-moment-info');
+        const angleInfo = document.getElementById('angle-info');
+        const torqueInfo = document.getElementById('torque-info');
+        
+        // Start the simulation
+        init();
+        animate();
+
+        function init() {
+            // Scene setup
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x1a1a1a);
+
+            // Camera setup
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(5, 6, 10);
+            camera.lookAt(scene.position);
+
+            // Renderer setup
+            const container = document.getElementById('container');
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            container.appendChild(renderer.domElement);
+
+            // Orbit controls (for camera rotation, zoom)
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(5, 10, 7.5);
+            scene.add(directionalLight);
+
+            // Helper grid
+            const gridHelper = new THREE.GridHelper(20, 20, 0x444444, 0x444444);
+            scene.add(gridHelper);
+            
+            // Axes helper (to show X,Y,Z axes)
+            const axesHelper = new THREE.AxesHelper(5);
+            scene.add(axesHelper);
+
+            // Create main components
+            createDipole(); // Create dipole first
+            createElectricField();
+            createTorqueIndicator();
+            setupGUI();
+
+            // Window resize handler
+            window.addEventListener('resize', onWindowResize);
+            
+            // Events for drag-to-rotate functionality
+            setupDragControls();
+        }
+        
+        function createElectricField() {
+            electricFieldGroup = new THREE.Group();
+            const arrowLength = 20;
+            const arrowColor = 0x00aaff;
+            const range = 10;
+            const step = 2;
+
+            for (let i = -range; i <= range; i += step) {
+                for (let j = -range; j <= range; j += step) {
+                    const arrow = new THREE.ArrowHelper(
+                        new THREE.Vector3(1, 0, 0), // Initial direction
+                        new THREE.Vector3(0, 0, 0), // Position will be set later
+                        arrowLength,
+                        arrowColor,
+                        1, 0.5
+                    );
+                    electricFieldGroup.add(arrow);
+                }
+            }
+            scene.add(electricFieldGroup);
+            updateElectricField();
+        }
+
+        function createDipole() {
+            dipoleGroup = new THREE.Group();
+            
+            const sphereRadius = 0.3;
+            const positiveChargeGeo = new THREE.SphereGeometry(sphereRadius, 32, 32);
+            const positiveChargeMat = new THREE.MeshStandardMaterial({ color: 0xff4444, roughness: 0.5 });
+            const positiveCharge = new THREE.Mesh(positiveChargeGeo, positiveChargeMat);
+            
+            const negativeChargeGeo = new THREE.SphereGeometry(sphereRadius, 32, 32);
+            const negativeChargeMat = new THREE.MeshStandardMaterial({ color: 0x4444ff, roughness: 0.5 });
+            const negativeCharge = new THREE.Mesh(negativeChargeGeo, negativeChargeMat);
+
+            const rodGeo = new THREE.CylinderGeometry(0.05, 0.05, 1, 16);
+            const rodMat = new THREE.MeshStandardMaterial({ color: 0xcccccc, roughness: 0.2 });
+            const rod = new THREE.Mesh(rodGeo, rodMat);
+            
+            dipoleGroup.add(positiveCharge);
+            dipoleGroup.add(negativeCharge);
+            dipoleGroup.add(rod);
+            
+            // Dipole moment vector
+            p_vector_helper = new THREE.ArrowHelper(new THREE.Vector3(1, 0, 0), new THREE.Vector3(0, 0, 0), 1, 0x00ff00);
+            dipoleGroup.add(p_vector_helper);
+
+            scene.add(dipoleGroup);
+            updateDipole();
+        }
+        
+        function createTorqueIndicator() {
+            const curve = new THREE.EllipseCurve(0, 0, 1.5, 1.5, -Math.PI / 2, Math.PI / 2, false, 0);
+            const points = curve.getPoints(50);
+            const geometry = new THREE.BufferGeometry().setFromPoints(points);
+            const material = new THREE.LineBasicMaterial({ color: 0xffaa00, linewidth: 3 });
+            const arc = new THREE.Line(geometry, material);
+
+            const coneGeo = new THREE.ConeGeometry(0.15, 0.3, 16);
+            const coneMat = new THREE.MeshBasicMaterial({ color: 0xffaa00 });
+            const arrowhead = new THREE.Mesh(coneGeo, coneMat);
+            arrowhead.position.set(0, 1.5, 0);
+            arrowhead.rotation.z = Math.PI;
+
+            torqueIndicator = new THREE.Group();
+            torqueIndicator.add(arc);
+            torqueIndicator.add(arrowhead);
+            torqueIndicator.visible = false;
+            scene.add(torqueIndicator);
+        }
+
+        function setupGUI() {
+            gui = new GUI({ title: 'Control Panel' });
+            
+            gui.add(params, 'E_Strength', 0.1, 5.0).name('Electric Field (E)').onChange(updateElectricField);
+            gui.add(params, 'E_Direction', ['X', 'Y', 'Z']).name('Field Direction').onChange(updateElectricField);
+            gui.add(params, 'charge', 0.1, 5.0).name('Charge (q)').onChange(updateDipole);
+            gui.add(params, 'length', 0.5, 4.0).name('Length (l)').onChange(updateDipole);
+            gui.add(params, 'initialAngle', 0, 180, 1).name('Initial Angle (θ)').onChange(setDipoleAngleBySlider).listen();
+            gui.add(params, 'startAnimation').name('Start Animation');
+            gui.add(params, 'resetDipole').name('Reset Dipole');
+        }
+        
+        function setDipoleAngleBySlider(angleInDegrees) {
+            if (animationRunning) return;
+            const angleRad = THREE.MathUtils.degToRad(angleInDegrees);
+
+            const E_direction_vec = new THREE.Vector3();
+            const dipole_base_direction = new THREE.Vector3(1, 0, 0);
+
+            switch(params.E_Direction) {
+                case 'X': E_direction_vec.set(1, 0, 0); break;
+                case 'Y': E_direction_vec.set(0, 1, 0); break;
+                case 'Z': E_direction_vec.set(0, 0, 1); break;
+            }
+
+            // Find quaternion to align dipole (X-axis) with E-field
+            const alignQuaternion = new THREE.Quaternion().setFromUnitVectors(dipole_base_direction, E_direction_vec);
+
+            // Find an axis perpendicular to E-field to rotate around
+            const rotationAxis = new THREE.Vector3(0, 0, 1);
+            if (params.E_Direction === 'Y') rotationAxis.set(1, 0, 0);
+            if (params.E_Direction === 'Z') rotationAxis.set(0, 1, 0);
+
+            const angleQuaternion = new THREE.Quaternion().setFromAxisAngle(rotationAxis, angleRad);
+            
+            // First align, then apply the angle
+            dipoleGroup.quaternion.copy(alignQuaternion).multiply(angleQuaternion);
+        }
+
+        function updateDipole() {
+            const halfLength = params.length / 2;
+            dipoleGroup.children[0].position.x = halfLength; // Positive charge on +X
+            dipoleGroup.children[1].position.x = -halfLength; // Negative charge on -X
+            
+            const rod = dipoleGroup.children[2];
+            rod.rotation.z = Math.PI / 2; // Rotate rod to align with X-axis
+            rod.scale.y = params.length;
+            rod.position.set(0,0,0);
+            
+            const p_magnitude = params.charge * params.length;
+            p_vector_helper.setDirection(new THREE.Vector3(1, 0, 0));
+            p_vector_helper.setLength(p_magnitude * 0.8, 0.5, 0.3); // Scale for better visuals
+        }
+        
+        function updateElectricField() {
+            let direction;
+            let arrowIndex = 0;
+            const range = 10;
+            const step = 2;
+
+            switch(params.E_Direction) {
+                case 'X': 
+                    direction = new THREE.Vector3(1, 0, 0); 
+                    for (let i = -range; i <= range; i += step) {
+                        for (let j = -range; j <= range; j += step) {
+                            if(electricFieldGroup.children[arrowIndex]){
+                               electricFieldGroup.children[arrowIndex].position.set(0, i, j);
+                            }
+                            arrowIndex++;
+                        }
+                    }
+                    break;
+                case 'Y': 
+                    direction = new THREE.Vector3(0, 1, 0);
+                     for (let i = -range; i <= range; i += step) {
+                        for (let j = -range; j <= range; j += step) {
+                             if(electricFieldGroup.children[arrowIndex]){
+                                electricFieldGroup.children[arrowIndex].position.set(i, 0, j);
+                             }
+                            arrowIndex++;
+                        }
+                    }
+                    break;
+                case 'Z': 
+                    direction = new THREE.Vector3(0, 0, 1); 
+                    for (let i = -range; i <= range; i += step) {
+                        for (let j = -range; j <= range; j += step) {
+                             if(electricFieldGroup.children[arrowIndex]){
+                                electricFieldGroup.children[arrowIndex].position.set(i, j, 0);
+                             }
+                            arrowIndex++;
+                        }
+                    }
+                    break;
+            }
+            
+            electricFieldGroup.children.forEach(arrow => arrow.setDirection(direction));
+            
+            // Re-apply dipole angle based on new field direction
+            if (!animationRunning) {
+                setDipoleAngleBySlider(params.initialAngle);
+            }
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const deltaTime = clock.getDelta();
+            
+            // Physics calculations
+            const E_vector = new THREE.Vector3();
+            switch(params.E_Direction) {
+                case 'X': E_vector.set(params.E_Strength, 0, 0); break;
+                case 'Y': E_vector.set(0, params.E_Strength, 0); break;
+                case 'Z': E_vector.set(0, 0, params.E_Strength); break;
+            }
+
+            const p_direction = new THREE.Vector3(1, 0, 0); // Default direction is now X-axis
+            p_direction.applyQuaternion(dipoleGroup.quaternion);
+            const p_magnitude = params.charge * params.length;
+            const p_vector = p_direction.clone().multiplyScalar(p_magnitude);
+
+            const torque_vector = new THREE.Vector3().crossVectors(p_vector, E_vector);
+            const torque_magnitude = torque_vector.length();
+
+            if (animationRunning && torque_magnitude > 0.001) {
+                const rotationAxis = torque_vector.clone().normalize();
+                
+                const angularVelocity = torque_magnitude * deltaTime * 0.5;
+                const dampingFactor = 0.97;
+                const angleToRotate = angularVelocity * dampingFactor;
+                
+                const quaternion = new THREE.Quaternion().setFromAxisAngle(rotationAxis, angleToRotate);
+                dipoleGroup.quaternion.premultiply(quaternion);
+            }
+
+            if (torque_magnitude > 0.1) {
+                torqueIndicator.visible = true;
+                const rotationAxis = torque_vector.clone().normalize();
+                torqueIndicator.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), rotationAxis);
+                
+                const scale = THREE.MathUtils.clamp(torque_magnitude * 0.3, 0.5, 2.0);
+                torqueIndicator.scale.set(scale, scale, scale);
+            } else {
+                torqueIndicator.visible = false;
+            }
+
+            updateInfoPanel(E_vector, p_vector, p_direction, torque_vector);
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        function updateInfoPanel(E_vec, p_vec, p_dir, torque_vec) {
+            eFieldInfo.innerHTML = `<b>E</b>: ${params.E_Strength.toFixed(2)} N/C (${params.E_Direction}-axis)`;
+            pMomentInfo.innerHTML = `<b>p</b>: ${p_vec.length().toFixed(2)} C·m`;
+            
+            const angleRad = p_dir.angleTo(E_vec.clone().normalize());
+            const angleDeg = THREE.MathUtils.radToDeg(angleRad);
+            angleInfo.innerHTML = `<b>Angle (θ)</b>: ${angleDeg.toFixed(1)}°`;
+            
+            torqueInfo.innerHTML = `<b>Torque (τ)</b>: ${torque_vec.length().toFixed(2)} N·m`;
+        }
+
+        function updateAngleFromDipoleOrientation() {
+            // 1. Get current E-field vector
+            const E_vector = new THREE.Vector3();
+            switch(params.E_Direction) {
+                case 'X': E_vector.set(1, 0, 0); break;
+                case 'Y': E_vector.set(0, 1, 0); break;
+                case 'Z': E_vector.set(0, 0, 1); break;
+            }
+
+            // 2. Get current dipole direction vector
+            const p_direction = new THREE.Vector3(1, 0, 0); // Base direction is X
+            p_direction.applyQuaternion(dipoleGroup.quaternion);
+
+            // 3. Calculate angle between them
+            const angleRad = p_direction.angleTo(E_vector);
+            const angleDeg = THREE.MathUtils.radToDeg(angleRad);
+
+            // 4. Update parameter (GUI will update automatically due to .listen())
+            params.initialAngle = angleDeg;
+        }
+
+        function setupDragControls() {
+            let isDragging = false;
+            const previousMousePosition = { x: 0, y: 0 };
+
+            renderer.domElement.addEventListener('mousedown', (e) => {
+                if (e.target !== renderer.domElement || animationRunning) return;
+
+                mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+                mouse.y = - (e.clientY / window.innerHeight) * 2 + 1;
+                raycaster.setFromCamera(mouse, camera);
+
+                const intersects = raycaster.intersectObjects(dipoleGroup.children);
+                if (intersects.length > 0) {
+                    isDragging = true;
+                    controls.enabled = false;
+                    previousMousePosition.x = e.clientX;
+                    previousMousePosition.y = e.clientY;
+                }
+            });
+
+            renderer.domElement.addEventListener('mousemove', (e) => {
+                if (!isDragging || animationRunning) return;
+                
+                const deltaMove = {
+                    x: e.clientX - previousMousePosition.x,
+                    y: e.clientY - previousMousePosition.y
+                };
+                
+                const rotationSpeed = 0.005;
+                const deltaQuaternion = new THREE.Quaternion()
+                    .setFromEuler(new THREE.Euler(
+                        deltaMove.y * rotationSpeed,
+                        deltaMove.x * rotationSpeed,
+                        0,
+                        'XYZ'
+                    ));
+                
+                dipoleGroup.quaternion.multiplyQuaternions(deltaQuaternion, dipoleGroup.quaternion);
+
+                previousMousePosition.x = e.clientX;
+                previousMousePosition.y = e.clientY;
+                
+                updateAngleFromDipoleOrientation();
+            });
+            
+            const onDragEnd = () => {
+                if (!isDragging) return;
+                isDragging = false;
+                controls.enabled = true;
+            };
+
+            renderer.domElement.addEventListener('mouseup', onDragEnd);
+            renderer.domElement.addEventListener('mouseout', onDragEnd);
+        }
+
+    </script>
+</body>
+</html>
+

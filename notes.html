@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>chartleap Notes - Subject-wise Revision Notes for Class 9, 10, 11 & 12</title>
+    <meta name="description" content="Class 9-12 ke liye premium revision notes download karein. Physics, Chemistry aur Math ke chapter-wise PDF notes sabhi Indian students ke liye.">
+    <meta name="keywords" content="class 10 science notes, class 12 physics revision notes, free educational pdf, chartleap royal notes">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="royal.css">
+    <link rel="icon" type="image/jpeg" href="logo.jpeg">
+    <link rel="apple-touch-icon" href="logo.jpeg">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="logo.jpeg" alt="chartleap Logo">
+            <span>chartleap</span>
+        </div>
+        <nav>
+            <a href="index.html"><button class="nav-btn">🏠 Home</button></a>
+            <a href="graph.html"><button class="nav-btn">📈 Graph Plotter</button></a>
+            <a href="simulations.html"><button class="nav-btn">🔬 Simulations</button></a>
+            <a href="Notes.html"><button class="nav-btn">📝 Notes</button></a>
+            <a href="Test.html"><button class="nav-btn">📋 Test</button></a>
+        </nav>
+    </header>
+    <main>
+        <h1>chartleap Royal Notes</h1>
+        <div class="subtitle">Premium Study Resources • Class 9–12</div>
+        <div class="filters">
+            <input type="text" id="search" placeholder="Search Chapter..." oninput="runFilter()">
+            <select id="classF" onchange="runFilter()">
+                <option value="">All Classes</option>
+                <option value="9">Class 9</option>
+                <option value="10">Class 10</option>
+                <option value="11">Class 11</option>
+                <option value="12">Class 12</option>
+            </select>
+            <select id="subjectF" onchange="runFilter()">
+                <option value="">All Subjects</option>
+                <option value="Math">Math</option>
+                <option value="Science">Science</option>
+                <option value="Physics">Physics</option>
+                <option value="Chemistry">Chemistry</option>
+                <option value="Biology">Biology</option>
+                <option value="English">English</option>
+            </select>
+            <input type="text" id="chapterF" placeholder="Chapter Filter..." oninput="runFilter()">
+            <button onclick="runFilter()">Apply</button>
+        </div>
+        <div class="container" id="notesList"></div>
+    </main>
+    <footer>
+        <p>© 2025 chartleap</p>
+    </footer>
+    <!-- Floating Feedback Button -->
+    <div class="feedback-float" id="feedback-float">
+        Feedback
+    </div>
+    <!-- Feedback Popup Modal -->
+    <div class="feedback-modal" id="feedback-modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-modal">×</span>
+            <h2>chartleap को रेटिंग दें</h2>
+            <div class="star-rating">
+                <span class="star" data-value="1">★</span>
+                <span class="star" data-value="2">★</span>
+                <span class="star" data-value="3">★</span>
+                <span class="star" data-value="4">★</span>
+                <span class="star" data-value="5">★</span>
+            </div>
+            <input type="text" id="feedback-name" placeholder="आपका नाम (वैकल्पिक)">
+            <textarea id="feedback-message" rows="4" placeholder="कोई सुझाव या तारीफ? 😊"></textarea>
+            <button id="submit-feedback">Submit Feedback</button>
+            <p id="feedback-status"></p>
+        </div>
+    </div>
+    <script>
+        // ───────────────────────────────
+        //     SIRF YEH ARRAY BADLO
+        // ───────────────────────────────
+        const allNotes = [
+            {
+                class: 9,
+                subject: "Math",
+                chapter: "Number System",
+                shortDesc: "Rational & irrational numbers, Euclid’s division lemma, HCF & LCM...",
+                pdf: "notes/class9-math-number-system.pdf"
+            
+            },
+            {
+                class: 10,
+                subject: "Science",
+                chapter: "Chemical Reactions & Equations",
+                shortDesc: "Types of reactions, balancing, corrosion, rancidity...",
+                pdf: "notes/class10-science-chemical-reactions.pdf"
+            },
+            // Naye notes yahan add karo – same format
+        ];
+
+        // ───────────────────────────────
+        //     Niche code mat change karna
+        // ───────────────────────────────
+
+        function showNotes(notesToShow) {
+            document.getElementById('notesList').innerHTML = notesToShow.map(note => `
+                <div class="card">
+                    <h3>${note.chapter}<br><small>${note.subject} • Class ${note.class}</small></h3>
+                    <p>${note.shortDesc}</p>
+                    <div class="btn-group">
+                        <button class="btn btn-view" onclick="openPDF('${note.pdf}', '${note.chapter} • ${note.subject}')">View PDF</button>
+                        <a href="${note.pdf}" download class="btn btn-download">Download PDF</a>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openPDF(pdfPath, title) {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div>${title}</div>
+                        <button class="close" onclick="this.closest('.modal').remove()">×</button>
+                    </div>
+                    <iframe src="${pdfPath}"></iframe>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+        }
+
+        function runFilter() {
+            const search = document.getElementById('search').value.toLowerCase().trim();
+            const cls    = document.getElementById('classF').value;
+            const sub    = document.getElementById('subjectF').value.toLowerCase().trim();
+            const chp    = document.getElementById('chapterF').value.toLowerCase().trim();
+
+            let result = allNotes.filter(n => {
+                return (!cls  || n.class == cls) &&
+                       (!sub  || n.subject.toLowerCase().includes(sub)) &&
+                       (!chp  || n.chapter.toLowerCase().includes(chp));
+            });
+
+            if (search) {
+                result.sort((a,b) => a.chapter.toLowerCase().includes(search) ? -1 : 1);
+            }
+
+            showNotes(result);
+        }
+
+        runFilter(); // Initial load
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>
