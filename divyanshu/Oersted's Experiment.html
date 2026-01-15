@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ørsted’s Discovery: 3D Electromagnetism Interactive Lab</title>
+    <meta name="description" content="An immersive 3D simulation of Hans Christian Ørsted's 1820 experiment. Explore the fundamental link between electricity and magnetism with real-time physics, interactive circuit controls, and mobile-optimized 3D visuals.">
+    <meta name="keywords" content="Oersted Experiment, Electromagnetism, 3D Physics Simulation, Magnetic Field, Hans Christian Ørsted, Physics Lab, Interactive Science, STEM Education, Electric Current, Compass Deflection, 1820 Physics Discovery">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { margin: 0; overflow: hidden; font-family: 'Georgia', serif; background-color: #050507; touch-action: none; }
+        
+        /* Responsive Panels */
+        .panel {
+            position: absolute; z-index: 100; background: rgba(15, 12, 10, 0.96);
+            color: #f1f5f9; border: 1px solid rgba(180, 83, 9, 0.4); border-radius: 16px;
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.7); transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(12px);
+            width: 310px;
+        }
+        
+        #control-panel { top: 20px; left: 20px; }
+        #theory-panel { top: 20px; right: 20px; width: 360px; }
+
+        @media (max-width: 768px) {
+            #control-panel { top: auto; bottom: 10px; left: 10px; right: 10px; width: calc(100% - 20px); }
+            #theory-panel { top: 10px; left: 10px; right: 10px; width: calc(100% - 20px); max-height: 35vh; }
+            .collapsed { width: 160px !important; height: 44px !important; }
+            .panel-header { padding: 10px 15px; font-size: 0.9rem; }
+            .panel-content { padding: 15px; }
+            .btn-royal { padding: 10px; margin-bottom: 10px; font-size: 0.9rem; }
+        }
+
+        .panel-header {
+            background: linear-gradient(90deg, #451a03, #78350f);
+            padding: 14px 20px; cursor: pointer; display: flex;
+            justify-content: space-between; align-items: center; font-weight: bold;
+            color: #fef3c7; text-transform: uppercase; border-radius: 16px 16px 0 0;
+            letter-spacing: 1.2px; border-bottom: 1px solid #92400e;
+        }
+        .panel-content { padding: 22px; max-height: 70vh; overflow-y: auto; }
+        .collapsed .panel-content { display: none; }
+        .collapsed { height: 52px !important; opacity: 0.85; }
+        
+        .btn-royal {
+            background: linear-gradient(145deg, #b45309, #78350f);
+            color: #fef3c7; border: 1px solid rgba(251, 191, 36, 0.5); width: 100%;
+            padding: 14px; border-radius: 10px; font-weight: bold; margin-bottom: 14px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            -webkit-tap-highlight-color: transparent;
+        }
+        .btn-royal:hover { transform: translateY(-3px); filter: brightness(1.25); }
+        .btn-royal.active { background: linear-gradient(145deg, #059669, #064e3b); border-color: #34d399; }
+        .glow-text { text-shadow: 0 0 15px rgba(251, 191, 36, 0.4); }
+    </style>
+</head>
+<body>
+
+<div id="control-panel" class="panel">
+    <div class="panel-header" onclick="togglePanel('control-panel')">
+        <span class="glow-text">⚙️ Control Console</span>
+        <span class="icon">▼</span>
+    </div>
+    <div class="panel-content">
+        <label class="text-[10px] text-amber-500 font-black uppercase mb-3 block tracking-[0.2em]">Power System</label>
+        <button id="toggle-switch" class="btn-royal">⚡ Switch On Karein</button>
+        <button id="reverse-current" class="btn-royal">⇄ Polarity Badlein</button>
+        <div class="mt-4 border-t border-amber-900/30 pt-4 flex items-center text-sm font-medium">
+            <span id="status-led" class="w-3.5 h-3.5 rounded-full mr-3 bg-red-700 transition-all duration-500 shadow-inner"></span>
+            <span id="status-text" class="text-slate-400">System Standby</span>
+        </div>
+    </div>
+</div>
+
+<div id="theory-panel" class="panel collapsed">
+    <div class="panel-header" onclick="togglePanel('theory-panel')">
+        <span class="glow-text">🔬 Magnetic Physics</span>
+        <span class="icon">▶</span>
+    </div>
+    <div class="panel-content text-sm leading-relaxed">
+        <h3 class="text-amber-400 font-bold mb-2 text-lg">Mobile Friendly Lab</h3>
+        <p class="mb-3 text-slate-300">Physics Update:</p>
+        <ul class="list-disc ml-4 space-y-2 text-slate-400">
+            <li><strong>Responsive UI:</strong> Ab controls mobile par bottom mein stack hote hain taaki touch karna aasan ho.</li>
+            <li><strong>Uniform Field:</strong> Chumbakiya field lines poore brass wire par pheli hui hain.</li>
+            <li><strong>Touch Optimized:</strong> Orbit controls ab touch gestures (pinch, rotate) ke liye optimized hain.</li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    function togglePanel(id) {
+        const panel = document.getElementById(id);
+        panel.classList.toggle('collapsed');
+        const icon = panel.querySelector('.icon');
+        icon.innerText = panel.classList.contains('collapsed') ? '▶' : '▼';
+        
+        // Mobile par jab ek panel khule toh dusra band ho jaye (space bachane ke liye)
+        if (window.innerWidth <= 768 && !panel.classList.contains('collapsed')) {
+            const otherId = id === 'control-panel' ? 'theory-panel' : 'control-panel';
+            const otherPanel = document.getElementById(otherId);
+            if (!otherPanel.classList.contains('collapsed')) {
+                otherPanel.classList.add('collapsed');
+                otherPanel.querySelector('.icon').innerText = '▶';
+            }
+        }
+    }
+
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playSound(freq, type, duration, vol=0.05) {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.type = type; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+        osc.start(); osc.stop(audioCtx.currentTime + duration);
+    }
+
+    let scene, camera, renderer, controls, needle, switchHandle, mainGroup, fieldClusters = [];
+    let electrons = [], electronPath;
+    let isCurrentOn = false, currentDirection = 1, needleTarget = 0;
+    let introDone = false;
+    let targetCamPos = new THREE.Vector3(18, 12, 22);
+    let switchRotationTarget = 0.6;
+
+    function init() {
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x08080a);
+        scene.fog = new THREE.Fog(0x08080a, 20, 80);
+
+        const aspect = window.innerWidth / window.innerHeight;
+        camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 1000);
+        camera.position.set(50, 40, 60);
+
+        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Mobile performance fix
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        document.body.appendChild(renderer.domElement);
+
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.enabled = false;
+
+        scene.add(new THREE.AmbientLight(0xffffff, 0.4));
+        const sun = new THREE.DirectionalLight(0xffffff, 1.4);
+        sun.position.set(10, 40, 20);
+        sun.castShadow = true;
+        scene.add(sun);
+
+        mainGroup = new THREE.Group();
+        scene.add(mainGroup);
+
+        createLab();
+        createFullCircuit();
+        createCompassOnStand();
+        createMagneticField();
+
+        animate();
+        
+        // Mobile specific camera adjustment
+        if (window.innerWidth <= 768) {
+            targetCamPos.set(25, 15, 30);
+        }
+    }
+
+    function createLab() {
+        const table = new THREE.Mesh(
+            new THREE.BoxGeometry(45, 1, 35),
+            new THREE.MeshStandardMaterial({ color: 0x1a1512, roughness: 0.6 })
+        );
+        table.position.y = -6;
+        table.receiveShadow = true;
+        mainGroup.add(table);
+    }
+
+    function createFullCircuit() {
+        const brassMat = new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.9, roughness: 0.1 });
+        const wireMat = new THREE.MeshStandardMaterial({ color: 0x0a0a0a, roughness: 0.8 });
+
+        const p1 = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.35, 6, 16), brassMat);
+        p1.position.set(-8, -3, 0);
+        mainGroup.add(p1);
+        const p2 = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.35, 6, 16), brassMat);
+        p2.position.set(8, -3, 0);
+        mainGroup.add(p2);
+
+        const mainWire = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 16.2, 32), brassMat);
+        mainWire.rotation.z = Math.PI / 2;
+        mainWire.position.y = 0;
+        mainGroup.add(mainWire);
+
+        const batPosTerm = new THREE.Vector3(-11.2, -1.8, 8);
+        const batNegTerm = new THREE.Vector3(-12.8, -1.8, 8);
+        const switchPivotPos = new THREE.Vector3(8.5, -4.75, 8);
+        const switchContactPos = new THREE.Vector3(11.5, -4.75, 8);
+        const pillar2Base = new THREE.Vector3(8, -5, 0);
+        const pillar2Top = new THREE.Vector3(8, 0, 0);
+        const pillar1Top = new THREE.Vector3(-8, 0, 0);
+        const pillar1Base = new THREE.Vector3(-8, -5, 0);
+
+        const tubePoints1 = [batPosTerm, new THREE.Vector3(-10, -5, 8), new THREE.Vector3(0, -5.2, 8), switchPivotPos];
+        const tubePoints2 = [switchContactPos, new THREE.Vector3(13, -5, 8), new THREE.Vector3(10, -5, 2), pillar2Base];
+        const tubePoints3 = [pillar1Base, new THREE.Vector3(-10, -5, 2), new THREE.Vector3(-14, -5, 8), batNegTerm];
+        
+        createTubeWire(tubePoints1, wireMat);
+        createTubeWire(tubePoints2, wireMat);
+        createTubeWire(tubePoints3, wireMat);
+
+        const finalPath = new THREE.CurvePath();
+        finalPath.add(new THREE.CatmullRomCurve3(tubePoints1));
+        finalPath.add(new THREE.LineCurve3(switchPivotPos, switchContactPos));
+        finalPath.add(new THREE.CatmullRomCurve3(tubePoints2));
+        finalPath.add(new THREE.LineCurve3(pillar2Base, pillar2Top));
+        finalPath.add(new THREE.LineCurve3(pillar2Top, pillar1Top));
+        finalPath.add(new THREE.LineCurve3(pillar1Top, pillar1Base));
+        finalPath.add(new THREE.CatmullRomCurve3(tubePoints3));
+        electronPath = finalPath;
+
+        const battery = new THREE.Group();
+        battery.add(new THREE.Mesh(new THREE.BoxGeometry(3, 4, 3), new THREE.MeshStandardMaterial({color: 0x111111})));
+        battery.add(createTerm(0.8, 0xcc0000));
+        battery.add(createTerm(-0.8, 0x333333));
+        battery.position.set(-12, -4, 8);
+        mainGroup.add(battery);
+
+        const switchBase = new THREE.Mesh(new THREE.BoxGeometry(5, 0.5, 3), new THREE.MeshStandardMaterial({color: 0x221a15}));
+        switchBase.position.set(10, -5.25, 8);
+        mainGroup.add(switchBase);
+
+        switchHandle = new THREE.Group();
+        const blade = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.1, 0.4), brassMat);
+        blade.position.x = 1.6;
+        switchHandle.add(blade);
+        const hnd = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.8), new THREE.MeshStandardMaterial({color: 0x000000}));
+        hnd.position.x = 3.3; hnd.rotation.z = Math.PI/2;
+        switchHandle.add(hnd);
+        switchHandle.position.set(8.4, -4.75, 8);
+        switchHandle.rotation.z = 0.6; 
+        mainGroup.add(switchHandle);
+
+        for(let i=0; i<60; i++) {
+            const e = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 8), new THREE.MeshBasicMaterial({color: 0x00ffff}));
+            e.userData.offset = i / 60;
+            e.visible = false;
+            electrons.push(e);
+            mainGroup.add(e);
+        }
+    }
+
+    function createTerm(x, color) {
+        const t = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.5), new THREE.MeshStandardMaterial({color}));
+        t.position.set(x, 2.2, 0);
+        return t;
+    }
+
+    function createTubeWire(pts, mat) {
+        const curve = new THREE.CatmullRomCurve3(pts);
+        const tube = new THREE.Mesh(new THREE.TubeGeometry(curve, 40, 0.1, 8, false), mat);
+        mainGroup.add(tube);
+    }
+
+    function createCompassOnStand() {
+        const stand = new THREE.Group();
+        stand.add(new THREE.Mesh(new THREE.BoxGeometry(5, 1, 5), new THREE.MeshStandardMaterial({color: 0x221a15})));
+        const housing = new THREE.Mesh(new THREE.CylinderGeometry(2, 2, 0.8, 32), new THREE.MeshStandardMaterial({color: 0xffaa00, metalness: 0.8}));
+        housing.position.y = 0.9;
+        stand.add(housing);
+        const face = new THREE.Mesh(new THREE.CircleGeometry(1.9, 32), new THREE.MeshStandardMaterial({color: 0xffffff}));
+        face.rotation.x = -Math.PI/2; face.position.y = 1.31;
+        stand.add(face);
+        const nPole = new THREE.Mesh(new THREE.ConeGeometry(0.25, 1.5, 4), new THREE.MeshStandardMaterial({color: 0xff0000}));
+        nPole.rotation.x = Math.PI/2; nPole.position.z = 0.75;
+        const sPole = new THREE.Mesh(new THREE.ConeGeometry(0.25, 1.5, 4), new THREE.MeshStandardMaterial({color: 0x0000ff}));
+        sPole.rotation.x = -Math.PI/2; sPole.position.z = -0.75;
+        needle = new THREE.Group();
+        needle.add(nPole, sPole);
+        needle.position.y = 1.45;
+        stand.add(needle);
+        stand.position.set(0, -5, 0); 
+        mainGroup.add(stand);
+    }
+
+    function createMagneticField() {
+        const xPositions = [-6, -3, 0, 3, 6];
+        xPositions.forEach(xPos => {
+            const cluster = new THREE.Group();
+            for(let i=0; i<3; i++) {
+                const ringGeo = new THREE.TorusGeometry(1.2 + i*0.8, 0.015, 8, 40);
+                const ringMat = new THREE.MeshBasicMaterial({ color: 0x0ea5e9, transparent: true, opacity: 0 });
+                const ring = new THREE.Mesh(ringGeo, ringMat);
+                ring.rotation.y = Math.PI / 2;
+                cluster.add(ring);
+            }
+            cluster.position.set(xPos, 0, 0);
+            fieldClusters.push(cluster);
+            mainGroup.add(cluster);
+        });
+    }
+
+    function updateLogic() {
+        const led = document.getElementById('status-led');
+        const text = document.getElementById('status-text');
+        const btn = document.getElementById('toggle-switch');
+
+        if(isCurrentOn) {
+            btn.innerText = "⚡ Switch Off Karein";
+            btn.classList.add('active');
+            led.className = "w-3.5 h-3.5 rounded-full mr-3 bg-green-500 shadow-[0_0_15px_#10b981]";
+            text.innerText = "Current ON: Field Active";
+            needleTarget = (Math.PI / 2.5) * currentDirection;
+            switchRotationTarget = 0; 
+        } else {
+            btn.innerText = "⚡ Switch On Karein";
+            btn.classList.remove('active');
+            led.className = "w-3.5 h-3.5 rounded-full mr-3 bg-red-700 shadow-none";
+            text.innerText = "System Standby";
+            needleTarget = 0;
+            switchRotationTarget = 0.6;
+        }
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+        const time = Date.now() * 0.001;
+
+        if (!introDone) {
+            camera.position.lerp(targetCamPos, 0.05);
+            if (camera.position.distanceTo(targetCamPos) < 0.1) {
+                introDone = true;
+                controls.enabled = true;
+            }
+        }
+
+        mainGroup.position.y = Math.sin(time) * 0.12;
+        needle.rotation.y += (needleTarget - needle.rotation.y) * 0.1;
+        if(isCurrentOn) needle.rotation.y += Math.sin(time * 25) * 0.012;
+
+        switchHandle.rotation.z += (switchRotationTarget - switchHandle.rotation.z) * 0.15;
+
+        fieldClusters.forEach((cluster, cIdx) => {
+            cluster.children.forEach((ring, rIdx) => {
+                if(isCurrentOn) {
+                    ring.material.opacity = 0.15 + Math.sin(time * 3 + cIdx + rIdx) * 0.1;
+                    ring.rotation.z += 0.08 * currentDirection; 
+                    ring.scale.setScalar(1 + Math.sin(time * 2 + rIdx) * 0.04);
+                } else {
+                    ring.material.opacity = 0;
+                }
+            });
+        });
+
+        electrons.forEach(e => {
+            e.visible = isCurrentOn;
+            if(isCurrentOn) {
+                e.userData.offset += 0.004 * currentDirection;
+                if(e.userData.offset > 1) e.userData.offset -= 1;
+                if(e.userData.offset < 0) e.userData.offset += 1;
+                const pos = electronPath.getPointAt(e.userData.offset);
+                e.position.copy(pos);
+            }
+        });
+
+        controls.update();
+        renderer.render(scene, camera);
+    }
+
+    document.getElementById('toggle-switch').onclick = () => {
+        isCurrentOn = !isCurrentOn;
+        playSound(isCurrentOn ? 280 : 190, 'sine', 0.25);
+        updateLogic();
+    };
+
+    document.getElementById('reverse-current').onclick = () => {
+        currentDirection *= -1;
+        playSound(440, 'triangle', 0.1);
+        if(isCurrentOn) updateLogic();
+    };
+
+    window.onload = init;
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        
+        // Dynamic target camera pos for resize
+        if (window.innerWidth <= 768) {
+            targetCamPos.set(25, 15, 30);
+        } else {
+            targetCamPos.set(18, 12, 22);
+        }
+    });
+</script>
+</body>
+</html>

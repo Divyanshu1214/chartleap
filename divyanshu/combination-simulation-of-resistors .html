@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<title> combination of resistors simulation </title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; user-select:none; }
+  body { font-family: 'Segoe UI', sans-serif; height:100vh; overflow:hidden; background:#5d4037;
+    background-image:url("https://www.transparenttextures.com/patterns/wood-pattern.png"); }
+  .container { display:flex; flex-direction:column; height:100vh; }
+  header { height:90px; background:#111; color:white; display:flex; align-items:center; justify-content:space-between; padding:0 40px; box-shadow:0 10px 30px rgba(0,0,0,0.6); }
+  .power { background:#333; padding:15px 25px; border-radius:12px; border:3px solid #555; display:flex; align-items:center; gap:20px; }
+  .display { background:black; color:#f33; font-size:36px; font-weight:bold; padding:10px 20px; border-radius:8px; min-width:120px; text-align:center; }
+  .slider { width:200px; height:10px; border-radius:5px; background:#555; outline:none; -webkit-appearance:none; }
+  .slider::-webkit-slider-thumb { -webkit-appearance:none; width:30px; height:30px; border-radius:50%; background:#f33; cursor:pointer; }
+  
+  main { flex:1; display:flex; overflow:hidden; }
+  aside { width:280px; background:#eee; border-right:4px solid #ccc; padding:20px; overflow-y:auto; }
+  .tray { display:grid; grid-template-columns:1fr 1fr; gap:15px; }
+  .resistor { background:white; padding:15px; border-radius:12px; text-align:center; cursor:grab; box-shadow:0 4px 15px rgba(0,0,0,0.2); transition:all 0.2s; }
+  .resistor:active { cursor:grabbing; transform:scale(0.95); }
+  .resistor img { height:50px; filter:drop-shadow(0 4px 8px rgba(0,0,0,0.4)); }
+  
+  .breadboard { flex:1; background:white; margin:20px; border-radius:30px; box-shadow:0 20px 60px rgba(0,0,0,0.5); position:relative; overflow:hidden;
+    background-image:radial-gradient(#111 20%, transparent 25%); background-size:20px 20px; }
+  .rails { position:absolute; left:40px; right:40px; height:20px; background:rgba(255,0,0,0.2); border:4px solid #c00; }
+  .rails.bottom { bottom:60px; background:rgba(0,0,255,0.2); border-color:#006; }
+  
+  .circuit-area { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); display:flex; align-items:center; gap:30px; min-height:200px; }
+  .probe-point { width:40px; height:40px; border-radius:50%; background:white; border:4px solid #666; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.3s; box-shadow:0 4px 15px rgba(0,0,0,0.3); }
+  .probe-point:hover { border-color:#007bff; transform:scale(1.2); }
+  .probe-point.active-red { border-color:#f00; animation:pulse-red 1.5s infinite; }
+  .probe-point.active-black { border-color:#000; animation:pulse-black 1.5s infinite; }
+  @keyframes pulse-red { 0%,100% { box-shadow:0 0 0 0 rgba(255,0,0,0.7); } 70% { box-shadow:0 0 0 15px rgba(255,0,0,0); } }
+  @keyframes pulse-black { 0%,100% { box-shadow:0 0 0 0 rgba(0,0,0,0.7); } 70% { box-shadow:0 0 0 15px rgba(0,0,0,0); } }
+  .inner { width:18px; height:18px; border-radius:50%; background:#666; }
+  .active-red .inner, .active-black .inner { background:white; }
+  
+  .wire-h { height:12px; background:linear-gradient(to bottom,#ef4444,#991b1b); border-radius:6px; box-shadow:0 4px 10px rgba(0,0,0,0.5); position:relative; }
+  .wire-h::before, .wire-h::after { content:''; position:absolute; width:12px; height:12px; background:#aaa; border-radius:50%; top:0; }
+  .wire-h::before { left:-6px; } .wire-h::after { right:-6px; }
+  .wire-v { width:12px; height:80px; background:linear-gradient(to right,#3b82f6,#1e40af); border-radius:6px; box-shadow:4px 0 10px rgba(0,0,0,0.5); position:relative; }
+  .wire-v::before, .wire-v::after { content:''; position:absolute; width:12px; height:12px; background:#aaa; border-radius:50%; left:0; }
+  .wire-v::before { top:-6px; } .wire-v::after { bottom:-6px; }
+  
+  .res { display:flex; align-items:center; gap:10px; background:#f3e5ab; padding:10px 20px; border-radius:50px; box-shadow:0 6px 15px rgba(0,0,0,0.4); position:relative; }
+  .res .band { width:20px; height:100%; border-radius:4px; }
+  .delete { position:absolute; top:-10px; right:-10px; background:#f00; color:white; width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; opacity:0; transition:0.2s; font-weight:bold; }
+  .res:hover .delete { opacity:1; }
+  
+  .drop-zone { border:4px dashed #999; border-radius:20px; padding:60px; text-align:center; font-size:20px; background:#f9f9f9; min-width:400px; min-height:200px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; }
+  .drop-zone.dragover { border-color:#007bff; background:#eef; }
+  
+  .multimeter { position:fixed; left:100px; top:100px; width:300px; background:#ffeb3b; border-radius:20px; padding:10px; box-shadow:0 20px 50px rgba(0,0,0,0.6); border-bottom:10px solid #f57f17; border-right:6px solid #f57f17; z-index:1000; cursor:move; }
+  .mm-screen { background:#111; color:#0f0; font-size:50px; text-align:right; padding:20px; border-radius:15px; height:100px; font-family:monospace; }
+  .probes { display:flex; justify-content:space-around; margin-top:20px; }
+  .probe { width:50px; height:50px; border-radius:50%; cursor:grab; display:flex; align-items:center; justify-content:center; border:4px solid; }
+  .probe.red { background:#c00; border-color:#800; }
+  .probe.black { background:#111; border-color:#000; }
+  .probe:active { cursor:grabbing; }
+  
+  footer { position:fixed; bottom:20px; right:20px; background:white; padding:20px 40px; border-radius:20px; box-shadow:0 10px 30px rgba(0,0,0,0.4); font-size:18px; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div class="power">
+      <span style="font-size:14px; color:#aaa;">DC POWER SUPPLY</span>
+      <div class="display" id="voltage">9.0V</div>
+      <input type="range" min="0" max="24" step="0.1" value="9" class="slider" id="supply">
+    </div>
+    <h1 style="font-size:40px; opacity:0.1; letter-spacing:15px;">PHYSICS LAB</h1>
+    <div></div>
+  </header>
+
+  <main>
+    <aside>
+      <h3 style="margin-bottom:20px; color:#444;">Components (घटक)</h3>
+      <div class="tray">
+        <div class="resistor" draggable="true" data-value="100"><div style="font-weight:bold; color:#666;">100Ω</div><img src="https://i.ibb.co/9yq7Y3K/resistor-100.png" alt="100"></div>
+        <div class="resistor" draggable="true" data-value="220"><div style="font-weight:bold; color:#666;">220Ω</div><img src="https://i.ibb.co/9yq7Y3K/resistor-100.png" alt="220"></div>
+        <div class="resistor" draggable="true" data-value="470"><div style="font-weight:bold; color:#666;">470Ω</div><img src="https://i.ibb.co/9yq7Y3K/resistor-100.png" alt="470"></div>
+        <div class="resistor" draggable="true" data-value="1000"><div style="font-weight:bold; color:#666;">1kΩ</div><img src="https://i.ibb.co/9yq7Y3K/resistor-100.png" alt="1k"></div>
+        <div class="resistor" draggable="true" data-value="4700"><div style="font-weight:bold; color:#666;">4.7kΩ</div><img src="https://i.ibb.co/9yq7Y3K/resistor-100.png" alt="4.7k"></div>
+        <div class="resistor" draggable="true" data-value="10000"><div style="font-weight:bold; color:#666;">10kΩ</div><img src="https://i.ibb.co/9yq7Y3K/resistor-100.png" alt="10k"></div>
+      </div>
+    </aside>
+
+    <div class="breadboard">
+      <div class="rails" style="top:60px;"></div>
+      <div class="rails bottom"></div>
+
+      <div class="circuit-area" id="circuit">
+        <div class="probe-point" data-v="9"><div class="inner"></div></div>
+        <div style="width:100px; height:12px;" class="wire-h"></div>
+        <div class="drop-zone" id="dropZone">
+          <div style="font-size:60px;">Drop Resistor Here</div>
+          <div>प्रतिरोधक यहाँ खींचें</div>
+        </div>
+        <div style="width:100px; height:12px;" class="wire-h" style="background:linear-gradient(to bottom,#3b82f6,#1e3a8a);"></div>
+        <div class="probe-point" data-v="0"><div class="inner"></div></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Multimeter -->
+  <div class="multimeter" id="multimeter">
+    <div style="background:#ff9800; height:30px; border-radius:15px 15px 0 0; cursor:move;"></div>
+    <div style="background:#111; padding:20px; border-radius:15px; color:#0f0;">
+      <div class="mm-screen" id="reading">--- V</div>
+      <div class="probes">
+        <div class="probe red" id="redProbe" draggable="true"><div style="width:20px; height:20px; background:white; border-radius:50%;"></div></div>
+        <div class="probe black" id="blackProbe" draggable="true"><div style="width:20px; height:20px; background:red; border-radius:50%;"></div></div>
+      </div>
+      <div style="text-align:center; margin-top:10px; color:#aaa; font-size:14px;">दोनों प्रोब जोड़ें</div>
+    </div>
+  </div>
+
+  <footer>
+    <div>कुल धारा: <span id="current">0.000</span> A</div>
+    <div style="margin-top:10px;">कुल प्रतिरोध: <span id="resistance">0</span> Ω</div>
+  </footer>
+</div>
+
+<script>
+// ====== Global Variables ======
+let supplyV = 9.0;
+let redV = null, blackV = null;
+let circuit = []; // Array of {value, id}
+
+const voltageEl = document.getElementById('voltage');
+const supplySlider = document.getElementById('supply');
+const dropZone = document.getElementById('dropZone');
+const circuitArea = document.getElementById('circuit');
+const reading = document.getElementById('reading');
+const currentEl = document.getElementById('current');
+const resistanceEl = document.getElementById('resistance');
+
+// ====== Update Supply Voltage ======
+supplySlider.addEventListener('input', (e) => {
+  supplyV = parseFloat(e.target.value);
+  voltageEl.textContent = supplyV.toFixed(1) + 'V';
+  document.querySelectorAll('[data-v]').forEach(p => {
+    if(p.dataset.v === '9') p.dataset.v = supplyV.toFixed(2);
+  });
+  updateCircuit();
+});
+
+// ====== Drag & Drop Resistors ======
+document.querySelectorAll('.resistor').forEach(r => {
+  r.addEventListener('dragstart', e => {
+    e.dataTransfer.setData('value', r.dataset.value);
+  });
+});
+
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault(); dropZone.classList.remove('dragover');
+  const val = e.dataTransfer.getData('value');
+  if(val) addResistor(parseFloat(val));
+});
+
+// ====== Add Resistor ======
+function addResistor(value) {
+  const id = Date.now();
+  circuit.push({id, value});
+
+  const res = document.createElement('div');
+  res.className = 'res';
+  res.innerHTML = `
+    <div class="band" style="background:brown;"></div>
+    <div class="band" style="background:red;"></div>
+    <div class="band" style="background:orange;"></div>
+    <div class="band" style="background:gold;"></div>
+    <div style="position:absolute; top:-30px; background:rgba(0,0,0,0.7); color:white; padding:5px 10px; border-radius:8px;">${value}Ω</div>
+    <div class="delete" onclick="removeResistor(${id})">X</div>
+  `;
+
+  const probeBefore = document.createElement('div');
+  probeBefore.className = 'probe-point';
+  probeBefore.innerHTML = '<div class="inner"></div>';
+  probeBefore.onclick = () => connectProbe(probeBefore);
+
+  const wire = document.createElement('div');
+  wire.className = 'wire-h';
+  wire.style.width = '80px';
+
+  // Insert before drop zone
+  circuitArea.insertBefore(probeBefore, dropZone);
+  circuitArea.insertBefore(res, dropZone);
+  circuitArea.insertBefore(wire, dropZone);
+
+  dropZone.style.display = 'none';
+  updateCircuit();
+}
+
+window.removeResistor = function(id) {
+  circuit = circuit.filter(r => r.id !== id);
+  updateCircuit();
+  if(circuit.length === 0) dropZone.style.display = 'flex';
+};
+
+// ====== Probes ======
+document.getElementById('redProbe').addEventListener('dragstart', e => {
+  e.dataTransfer.setData('probe', 'red');
+});
+document.getElementById('blackProbe').addEventListener('dragstart', e => {
+  e.dataTransfer.setData('probe', 'black');
+});
+
+function connectProbe(point) {
+  const v = parseFloat(point.dataset.v) || 0;
+  const probe = event.dataTransfer?.getData('probe');
+  if(!probe) return;
+
+  // Remove previous active
+  document.querySelectorAll('.active-red, .active-black').forEach(p => {
+    p.classList.remove('active-red','active-black');
+  });
+
+  if(probe === 'red') { redV = v; point.classList.add('active-red'); }
+  else { blackV = v; point.classList.add('active-black'); }
+
+  updateReading();
+}
+
+// Allow drop on probe points
+document.addEventListener('dragover', e => { if(e.target.classList.contains('probe-point')) e.preventDefault(); });
+document.addEventListener('drop', e => {
+  if(e.target.classList.contains('probe-point')) {
+    e.preventDefault();
+    connectProbe(e.target);
+  }
+});
+
+// ====== Calculations ======
+function updateCircuit() {
+  const totalR = circuit.reduce((sum,r) => sum + r.value, 0);
+  const I = totalR > 0 ? supplyV / totalR : 0;
+  
+  resistanceEl.textContent = totalR;
+  currentEl.textContent = I.toFixed(3);
+  
+  let cumulativeDrop = 0;
+  document.querySelectorAll('.probe-point').forEach((p, i) => {
+    if(i === 0) p.dataset.v = supplyV;
+    else if(i === document.querySelectorAll('.probe-point').length - 1) p.dataset.v = 0;
+    else {
+      const prevR = circuit[i-1]?.value || 0;
+      cumulativeDrop += prevR * I;
+      p.dataset.v = (supplyV - cumulativeDrop).toFixed(3);
+    }
+  });
+  
+  updateReading();
+}
+
+function updateReading() {
+  if(redV !== null && blackV !== null) {
+    const diff = (redV - blackV).toFixed(2);
+    reading.textContent = diff + ' V';
+  } else {
+    reading.textContent = '--- V';
+  }
+}
+
+// Make multimeter draggable
+const mm = document.getElementById('multimeter');
+let isDragging = false, offsetX, offsetY;
+mm.addEventListener('mousedown', e => {
+  if(e.target.tagName !== 'INPUT') {
+    isDragging = true;
+    offsetX = e.clientX - mm.offsetLeft;
+    offsetY = e.clientY - mm.offsetTop;
+  }
+});
+document.addEventListener('mousemove', e => {
+  if(isDragging) {
+    mm.style.left = (e.clientX - offsetX) + 'px';
+    mm.style.top = (e.clientY - offsetY) + 'px';
+  }
+});
+document.addEventListener('mouseup', () => isDragging = false);
+
+// Initialize
+updateCircuit();
+</script>
+</body>
+</html>

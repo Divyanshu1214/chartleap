@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Ohm's Law 3D Simulation - Virtual Interactive Circuit Lab | chartleap</title>
+    <meta name="description" content="Ohm ka niyam (V=IR) ek virtual circuit ke saath samjhein. Voltage aur resistance badal kar bulb ki brightness aur current (I) par asar dekhein.">
+    <meta name="keywords" content="ohms law 3d simulation, virtual electricity lab, v=ir experiment online, interactive circuit simulator">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Three.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+        body { font-family: 'Poppins', sans-serif; }
+        .slider-thumb::-webkit-slider-thumb {
+            -webkit-appearance: none; appearance: none; width: 20px; height: 20px;
+            background: #4F46E5; cursor: pointer; border-radius: 50%;
+        }
+        #canvas-container {
+            width: 100%; height: 400px; position: relative; overflow: hidden;
+            background: #1a1a1a; /* Dark background for better light contrast */
+            border-radius: 12px;
+            cursor: grab;
+        }
+        #canvas-container:active { cursor: grabbing; }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col items-center py-6">
+
+    <header class="text-center mb-6">
+        <h1 class="text-4xl font-bold text-indigo-700 mb-1">ओम का नियम (3D)</h1>
+        <p class="text-sm text-gray-600">माउस का उपयोग करके सर्किट को घुमाएं (Rotate) और देखें</p>
+    </header>
+
+    <div class="container mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-7xl">
+        
+        <!-- Left: Controls -->
+        <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex flex-col justify-center space-y-6">
+            <h2 class="text-lg font-semibold text-gray-700 border-b pb-2">नियंत्रण (Controls)</h2>
+            
+            <!-- Voltage -->
+            <div>
+                <div class="flex justify-between mb-1">
+                    <label class="font-medium text-gray-600">वोल्टेज (V)</label>
+                    <span id="displayV" class="font-bold text-indigo-600 text-lg">5.0 V</span>
+                </div>
+                <input type="range" id="voltageSlider" min="0" max="12" step="0.1" value="5.0" class="w-full h-2 bg-gray-300 rounded-lg appearance-none slider-thumb">
+            </div>
+
+            <!-- Resistance -->
+            <div>
+                <div class="flex justify-between mb-1">
+                    <label class="font-medium text-gray-600">प्रतिरोध (R)</label>
+                    <span id="displayR" class="font-bold text-green-600 text-lg">500 &Omega;</span>
+                </div>
+                <input type="range" id="resistanceSlider" min="0" max="1000" step="10" value="500" class="w-full h-2 bg-gray-300 rounded-lg appearance-none slider-thumb">
+            </div>
+
+            <!-- Output -->
+            <div class="bg-indigo-50 p-4 rounded-lg text-center border border-indigo-100">
+                <p class="text-xs text-gray-500 uppercase">Current (I)</p>
+                <p id="displayI" class="text-3xl font-bold text-indigo-800 my-1">10.0 mA</p>
+                <p class="text-xs text-gray-400">I = V / R</p>
+            </div>
+
+            <!-- Warning -->
+            <div id="warningBox" class="hidden bg-red-100 border-l-4 border-red-500 text-red-700 p-3 rounded animate-pulse text-sm">
+                <strong>चेतावनी:</strong> शॉर्ट सर्किट! (Short Circuit)
+            </div>
+        </div>
+
+        <!-- Center: 3D Simulation -->
+        <div class="lg:col-span-2 flex flex-col gap-4">
+            <!-- 3D Canvas Container -->
+            <div id="canvas-container" class="shadow-xl shadow-inner">
+                <!-- Three.js canvas will be appended here -->
+                <div class="absolute top-4 right-4 text-white text-xs opacity-50 pointer-events-none select-none">
+                    Left Click + Drag to Rotate
+                </div>
+            </div>
+
+            <!-- Graph -->
+            <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 h-64">
+                <canvas id="graphCanvas"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+<script>
+    // --- Global Variables ---
+    let scene, camera, renderer;
+    let electrons = [];
+    let bulbLight, bulbMesh, bulbCore;
+    let wirePath = [];
+    let batteryGroup;
+    
+    // Simulation State
+    let voltage = 5.0;
+    let resistance = 500;
+    let current = 0.01; // Amps
+    let isShort = false;
+    
+    // DOM Elements
+    const vSlider = document.getElementById('voltageSlider');
+    const rSlider = document.getElementById('resistanceSlider');
+    const dV = document.getElementById('displayV');
+    const dR = document.getElementById('displayR');
+    const dI = document.getElementById('displayI');
+    const warn = document.getElementById('warningBox');
+
+    // --- Initialize 3D Scene ---
+    function init3D() {
+        const container = document.getElementById('canvas-container');
+        const w = container.clientWidth;
+        const h = container.clientHeight;
+
+        // Scene
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x1a1a1a); // Dark grey background
+        // Add some fog for depth
+        scene.fog = new THREE.Fog(0x1a1a1a, 10, 50);
+
+        // Camera
+        camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 100);
+        camera.position.set(0, 12, 18);
+        camera.lookAt(0, 0, 0);
+
+        // Renderer
+        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(w, h);
+        renderer.shadowMap.enabled = true;
+        container.appendChild(renderer.domElement);
+
+        // Lights
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+        scene.add(ambientLight);
+
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.5);
+        dirLight.position.set(5, 10, 5);
+        dirLight.castShadow = true;
+        scene.add(dirLight);
+
+        // --- Build Circuit Objects ---
+        buildCircuit();
+        createElectrons();
+
+        // --- Event Listeners for Interaction ---
+        setupInteraction(container);
+
+        // Start Loop
+        animate();
+    }
+
+    function buildCircuit() {
+        // Materials
+        const wireMat = new THREE.MeshStandardMaterial({ color: 0x555555, roughness: 0.4, metalness: 0.8 });
+        const batteryBodyMat = new THREE.MeshStandardMaterial({ color: 0x111111 }); // Black
+        const batteryCapMat = new THREE.MeshStandardMaterial({ color: 0xb87333, metalness: 1.0, roughness: 0.2 }); // Copper
+        const resistorMat = new THREE.MeshStandardMaterial({ color: 0xd2b48c }); // Beige
+        
+        // 1. Wires (Rectangular Loop)
+        // Coordinates: x: -5 to 5, z: -3 to 3
+        const tubeRadius = 0.15;
+        
+        // We create 4 segments manually to easily place components
+        // Back Wire
+        createTube(new THREE.Vector3(-5, 0, -3), new THREE.Vector3(5, 0, -3), wireMat);
+        // Front Wire (Broken for Ammeter/Battery?) - Let's keep it simple
+        // Left Wire (Battery Side)
+        createTube(new THREE.Vector3(-5, 0, -3), new THREE.Vector3(-5, 0, 3), wireMat);
+        // Right Wire (Bulb Side)
+        createTube(new THREE.Vector3(5, 0, -3), new THREE.Vector3(5, 0, 3), wireMat);
+        // Bottom Wire (Connects Battery and Bulb)
+        createTube(new THREE.Vector3(-5, 0, 3), new THREE.Vector3(5, 0, 3), wireMat);
+
+        // 2. Battery (On Left Wire)
+        batteryGroup = new THREE.Group();
+        const battCyl = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 3, 32), batteryBodyMat);
+        battCyl.rotation.z = Math.PI / 2;
+        const battCap = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.5, 32), batteryCapMat);
+        battCap.rotation.z = Math.PI / 2;
+        battCap.position.x = 1.6; // Positive terminal
+        
+        // Battery Label (+)
+        // Simple Red Ring
+        const ring = new THREE.Mesh(new THREE.TorusGeometry(0.8, 0.1, 16, 32), new THREE.MeshBasicMaterial({ color: 0xff0000 }));
+        ring.rotation.y = Math.PI / 2;
+        ring.position.x = 1.3;
+
+        batteryGroup.add(battCyl, battCap, ring);
+        batteryGroup.position.set(-5, 0.5, 0); // Place on left wire
+        batteryGroup.rotation.y = Math.PI / 2; // Align with wire
+        scene.add(batteryGroup);
+
+        // 3. Resistor (On Back Wire)
+        const resistorGroup = new THREE.Group();
+        const resBody = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 2.5, 32), resistorMat);
+        resBody.rotation.z = Math.PI / 2;
+        // Bands
+        const bandGeo = new THREE.CylinderGeometry(0.51, 0.51, 0.2, 32);
+        const b1 = new THREE.Mesh(bandGeo, new THREE.MeshBasicMaterial({color: 0xff0000}));
+        const b2 = new THREE.Mesh(bandGeo, new THREE.MeshBasicMaterial({color: 0x00ff00}));
+        const b3 = new THREE.Mesh(bandGeo, new THREE.MeshBasicMaterial({color: 0x0000ff}));
+        b1.rotation.z = Math.PI/2; b1.position.x = -0.6;
+        b2.rotation.z = Math.PI/2; b2.position.x = 0;
+        b3.rotation.z = Math.PI/2; b3.position.x = 0.6;
+        
+        resistorGroup.add(resBody, b1, b2, b3);
+        resistorGroup.position.set(0, 0.5, -3);
+        scene.add(resistorGroup);
+        
+        // Label 'R'
+        // (Skipping text geometry for simplicity, using logic/UI instead)
+
+        // 4. Bulb (On Right Wire)
+        const bulbGroup = new THREE.Group();
+        // Socket
+        const socket = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 1, 16), new THREE.MeshStandardMaterial({color: 0x888888}));
+        socket.position.y = 0.5;
+        // Glass
+        bulbMesh = new THREE.Mesh(
+            new THREE.SphereGeometry(1, 32, 32),
+            new THREE.MeshPhysicalMaterial({
+                color: 0xffffff,
+                transmission: 0.9, // Glass-like
+                opacity: 1,
+                transparent: true,
+                roughness: 0.1,
+                metalness: 0
+            })
+        );
+        bulbMesh.position.y = 1.5;
+        // Filament/Core (The part that glows)
+        bulbCore = new THREE.Mesh(
+            new THREE.SphereGeometry(0.3, 16, 16),
+            new THREE.MeshBasicMaterial({ color: 0x222222 }) // Starts dark
+        );
+        bulbCore.position.y = 1.5;
+        
+        // Light Source
+        bulbLight = new THREE.PointLight(0xffaa00, 0, 15); // Color, Intensity, Distance
+        bulbLight.position.set(5, 2, 0);
+        bulbLight.castShadow = true;
+
+        bulbGroup.add(socket, bulbMesh, bulbCore);
+        bulbGroup.position.set(5, 0, 0);
+        scene.add(bulbGroup);
+        scene.add(bulbLight);
+        
+        // Floor
+        const floor = new THREE.Mesh(
+            new THREE.PlaneGeometry(20, 20),
+            new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.8 })
+        );
+        floor.rotation.x = -Math.PI / 2;
+        floor.position.y = -0.5;
+        floor.receiveShadow = true;
+        scene.add(floor);
+    }
+
+    function createTube(p1, p2, material) {
+        const path = new THREE.LineCurve3(p1, p2);
+        const geometry = new THREE.TubeGeometry(path, 1, 0.15, 8, false);
+        const mesh = new THREE.Mesh(geometry, material);
+        scene.add(mesh);
+    }
+
+    function createElectrons() {
+        const geometry = new THREE.SphereGeometry(0.12, 8, 8);
+        const material = new THREE.MeshBasicMaterial({ color: 0xFFFF00 }); // Yellow
+        
+        // Define path points (Rectangle loop)
+        // Start at battery (+), go to resistor, bulb, back to battery (-)
+        // p1: (-5, 0, 0) -> (-5, 0, -3)
+        // p2: (-5, 0, -3) -> (5, 0, -3)
+        // p3: (5, 0, -3) -> (5, 0, 3)
+        // p4: (5, 0, 3) -> (-5, 0, 3)
+        // p5: (-5, 0, 3) -> (-5, 0, 0)
+        
+        // We will manage position simply by a distance parameter 't' from 0 to Perimeter
+        const numElectrons = 30;
+        for (let i = 0; i < numElectrons; i++) {
+            const mesh = new THREE.Mesh(geometry, material);
+            scene.add(mesh);
+            electrons.push({
+                mesh: mesh,
+                offset: (i / numElectrons) * 26, // 26 is approx perimeter (10+10+6+3? no loop calc: 6+10+6+10 = 32 approx)
+                distance: (i / numElectrons) * 32
+            });
+        }
+    }
+
+    function updateElectrons(speed) {
+        // Path Logic: 
+        // Seg 1: Left Wire (Up): (-5, 0, 3) -> (-5, 0, -3) [Length 6]
+        // Seg 2: Back Wire (Right): (-5, 0, -3) -> (5, 0, -3) [Length 10]
+        // Seg 3: Right Wire (Down): (5, 0, -3) -> (5, 0, 3) [Length 6]
+        // Seg 4: Front Wire (Left): (5, 0, 3) -> (-5, 0, 3) [Length 10]
+        const totalLen = 32;
+
+        electrons.forEach(e => {
+            e.distance += speed;
+            if (e.distance > totalLen) e.distance -= totalLen;
+
+            let x, z;
+            const d = e.distance;
+
+            if (d < 6) { // Left wire moving -z
+                x = -5;
+                z = 3 - d;
+            } else if (d < 16) { // Back wire moving +x
+                x = -5 + (d - 6);
+                z = -3;
+            } else if (d < 22) { // Right wire moving +z
+                x = 5;
+                z = -3 + (d - 16);
+            } else { // Front wire moving -x
+                x = 5 - (d - 22);
+                z = 3;
+            }
+            
+            e.mesh.position.set(x, 0, z);
+        });
+    }
+
+    // --- Interaction Logic (Rotate Camera) ---
+    let isDragging = false;
+    let previousMousePosition = { x: 0, y: 0 };
+    let theta = 0; // Horizontal angle
+    let phi = Math.PI / 3; // Vertical angle
+
+    function setupInteraction(domElement) {
+        domElement.addEventListener('mousedown', (e) => {
+            isDragging = true;
+        });
+        domElement.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                const deltaMove = {
+                    x: e.offsetX - previousMousePosition.x,
+                    y: e.offsetY - previousMousePosition.y
+                };
+
+                theta -= deltaMove.x * 0.01;
+                phi -= deltaMove.y * 0.01;
+
+                // Clamp vertical
+                phi = Math.min(Math.PI / 2 - 0.1, Math.max(0.1, phi));
+                
+                updateCameraPosition();
+            }
+            previousMousePosition = { x: e.offsetX, y: e.offsetY };
+        });
+        window.addEventListener('mouseup', () => { isDragging = false; });
+    }
+
+    function updateCameraPosition() {
+        const radius = 18;
+        camera.position.x = radius * Math.sin(theta) * Math.cos(phi);
+        camera.position.y = radius * Math.sin(phi);
+        camera.position.z = radius * Math.cos(theta) * Math.cos(phi);
+        camera.lookAt(0, 0, 0);
+    }
+
+
+    // --- Chart.js Logic (2D Graph) ---
+    const ctxGraph = document.getElementById('graphCanvas').getContext('2d');
+    const ohmChart = new Chart(ctxGraph, {
+        type: 'scatter',
+        data: {
+            datasets: [{
+                label: 'Operating Point',
+                data: [{x: 5, y: 10}],
+                backgroundColor: '#4F46E5',
+                pointRadius: 6
+            }, {
+                label: 'V-I Line',
+                data: [],
+                type: 'line',
+                borderColor: 'rgba(79, 70, 229, 0.2)',
+                borderDash: [5, 5],
+                pointRadius: 0,
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: { duration: 0 },
+            scales: {
+                x: { type: 'linear', min: 0, max: 12, title: {display:true, text:'Voltage (V)'} },
+                y: { min: 0, suggestedMax: 50, title: {display:true, text:'Current (mA)'} }
+            }
+        }
+    });
+
+    // --- Main Animation Loop ---
+    function animate() {
+        requestAnimationFrame(animate);
+
+        // 1. Get UI Values
+        let V = parseFloat(vSlider.value);
+        let R = parseFloat(rSlider.value);
+        let I_mA = 0;
+        
+        // Logic
+        isShort = (R <= 0);
+        if (isShort) {
+            I_mA = (V > 0) ? 5000 : 0; // Theoretical infinity
+        } else {
+            I_mA = (V / R) * 1000;
+        }
+
+        // Update DOM Text
+        dV.textContent = V.toFixed(1) + " V";
+        dR.textContent = R.toFixed(0) + " Ω";
+        
+        if (isShort && V > 0) {
+            dI.textContent = "MAX!";
+            warn.classList.remove('hidden');
+            warn.innerHTML = `<strong>खतरा!</strong> शॉर्ट सर्किट! रेसिस्टर नहीं है!`;
+        } else {
+            dI.textContent = I_mA.toFixed(1) + " mA";
+            warn.classList.add('hidden');
+        }
+
+        // 2. Update 3D Scene
+        // Bulb Brightness
+        if (isShort && V > 0) {
+            bulbLight.intensity = 5 + Math.random() * 5; // Flicker
+            bulbLight.color.setHex(0xff0000);
+            bulbCore.material.color.setHex(0xffcccc);
+            bulbCore.scale.setScalar(1.2 + Math.sin(Date.now()*0.05)*0.1); // Throbbing
+        } else {
+            const normalizedI = Math.min(I_mA / 60, 1); // Max brightness at 60mA
+            bulbLight.intensity = normalizedI * 3;
+            bulbLight.color.setHex(0xffaa00);
+            
+            // Emissive core look
+            let coreColor = new THREE.Color(0x222222);
+            coreColor.lerp(new THREE.Color(0xffff00), normalizedI);
+            bulbCore.material.color = coreColor;
+            bulbCore.scale.setScalar(1);
+        }
+
+        // Electron Speed
+        // Base speed + current factor
+        let speed = 0;
+        if (isShort && V > 0) speed = 1.5;
+        else speed = I_mA * 0.005; 
+        
+        updateElectrons(speed);
+
+        renderer.render(scene, camera);
+
+        // 3. Update Graph
+        ohmChart.data.datasets[0].data = [{x: V, y: I_mA}];
+        // Line
+        if (!isShort && R > 0) {
+            ohmChart.data.datasets[1].data = [{x:0, y:0}, {x:12, y:(12/R)*1000}];
+            if(I_mA > 50) ohmChart.options.scales.y.suggestedMax = I_mA + 20;
+            else ohmChart.options.scales.y.suggestedMax = 50;
+        }
+        ohmChart.update();
+    }
+
+    // Init on Load
+    window.onload = init3D;
+    window.addEventListener('resize', () => {
+        if(!camera || !renderer) return;
+        const con = document.getElementById('canvas-container');
+        camera.aspect = con.clientWidth / con.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(con.clientWidth, con.clientHeight);
+    });
+
+</script>
+</body>
+</html>
