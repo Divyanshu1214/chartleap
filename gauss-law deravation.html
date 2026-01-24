@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>chartleap: Gauss Law Masterclass</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&family=Noto+Sans+Devanagari:wght@400;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" 
+            onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <style>
+        :root { 
+            --primary: #00d2ff; 
+            --bg: #0f172a; 
+            --card: #1e293b; 
+            --accent: #ffeb3b; 
+            --red: #ff4444; 
+        }
+
+        body { 
+            margin: 0; 
+            font-family: 'Noto Sans Devanagari', sans-serif; 
+            background: var(--bg); 
+            color: #f1f5f9; 
+            line-height: 1.8;
+            font-size: 18px; /* बड़े फॉन्ट ताकि सब साफ़ दिखे */
+        }
+        
+        header { 
+            background: linear-gradient(135deg, #1e40af, #00d2ff); 
+            padding: 60px 20px; 
+            text-align: center; 
+            box-shadow: 0 4px 30px rgba(0,0,0,0.5); 
+        }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+
+        /* Symbols Glossary */
+        .symbol-guide {
+            background: var(--card);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 30px 0;
+            border: 1px solid var(--primary);
+        }
+        .symbol-item { text-align: center; }
+        .symbol-item b { font-size: 1.5rem; color: var(--accent); font-family: 'Roboto Slab', serif; }
+
+        /* Desi Trick Styling */
+        .desi-trick { 
+            background: rgba(255, 235, 59, 0.1); 
+            border: 2px dashed var(--accent); 
+            padding: 25px; 
+            border-radius: 20px; 
+            margin: 30px 0; 
+        }
+
+        /* 3D Lab Box - Guaranteed Visibility */
+        #lab-container {
+            width: 100%;
+            height: 500px;
+            background: #000;
+            border-radius: 20px;
+            border: 3px solid var(--primary);
+            margin: 30px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .ui-overlay { position: absolute; top: 15px; left: 15px; background: rgba(0,0,0,0.85); padding: 15px; border-radius: 10px; border: 1px solid var(--primary); font-size: 0.9rem; z-index: 10; }
+        .controls { position: absolute; bottom: 15px; right: 15px; background: rgba(0,0,0,0.9); padding: 15px; border-radius: 10px; z-index: 10; width: 220px; }
+
+        .step-card { background: var(--card); padding: 30px; border-radius: 20px; margin-bottom: 30px; border-left: 8px solid var(--primary); }
+        h1, h2, h3 { font-family: 'Roboto Slab', serif; color: var(--primary); }
+        
+        .katex { font-size: 1.2em; } /* फार्मूला को थोड़ा बड़ा दिखाने के लिए */
+
+        @media (max-width: 600px) { #lab-container { height: 400px; } }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>chartleap Interactive Physics</h1>
+    <p>गॉस की प्रमेय: अब हर सिम्बल दिखेगा बिल्कुल साफ़</p>
+</header>
+
+<div class="container">
+
+    <h3>🎭 चिन्हों को पहचानें (Symbols Guide)</h3>
+    <div class="symbol-guide">
+        <div class="symbol-item"><b>$\Phi$</b><br>Phi (फ्लक्स)</div>
+        <div class="symbol-item"><b>$\epsilon_0$</b><br>Epsilon Not</div>
+        <div class="symbol-item"><b>$E$</b><br>विद्युत क्षेत्र</div>
+        <div class="symbol-item"><b>$dA$</b><br>छोटा टुकड़ा</div>
+        <div class="symbol-item"><b>$\oint$</b><br>समाकलन</div>
+    </div>
+
+    <div class="desi-trick">
+        <h3>🔥 देसी ट्रिक: बल्ब वाली कहानी</h3>
+        <p>एक जलते हुए <b>बल्ब ($+q$)</b> से निकलने वाली <b>रोशनी ($E$)</b> को सोचें। अगर आप बल्ब को एक <b>कांच के गोले</b> में बंद कर दें, तो उस कांच से जितनी रोशनी बाहर आएगी, वही <b>$\Phi$ (फ्लक्स)</b> है।</p>
+        <p><b>याद रखें:</b> रोशनी ($E$) और कांच का टुकड़ा ($dA$) दोनों एक ही तरफ हैं, इसलिए इनके बीच कोई झगड़ा नहीं—मतलब एंगल <b>$0^\circ$</b> है!</p>
+    </div>
+
+    <h2>🔍 3D लाइव एक्सपेरिमेंट</h2>
+    <div id="lab-container">
+        <div class="ui-overlay">
+            <b style="color:var(--red)">●</b> आवेश ($+q$)<br>
+            <b style="color:var(--primary)">⬡</b> गाऊसीय सतह<br>
+            <b style="color:var(--accent)">⬜</b> टुकड़ा ($dA$)<br>
+            <b style="color:#fff">↗</b> क्षेत्र ($E$)
+        </div>
+        <div class="controls">
+            <label>दूरी ($r$): <span id="r-val" style="color:var(--accent); font-weight:bold;">2.5</span></label>
+            <input type="range" id="r-slider" min="1.5" max="4" step="0.1" value="2.5">
+        </div>
+    </div>
+
+    <h2>📝 स्टेप-बाय-स्टेप निगमन</h2>
+
+    <div class="step-card">
+        <h3>1. काल्पनिक गोला</h3>
+        <p>हम आवेश $+q$ के चारों ओर $r$ दूरी का एक गोला मानते हैं। चूंकि गोला हर जगह से बराबर दूरी पर है, इसलिए ताकत $E$ भी हर जगह एक जैसी होगी।</p>
+    </div>
+
+    <div class="step-card">
+        <h3>2. फ्लक्स की गणना</h3>
+        <p>छोटे टुकड़े $dA$ के लिए फ्लक्स:</p>
+        $$d\Phi = E \cdot dA \cdot \cos 0^\circ$$
+        <p>$\cos 0^\circ = 1$ होता है, इसलिए: $d\Phi = E \cdot dA$</p>
+    </div>
+
+    <div class="step-card">
+        <h3>3. कुल फ्लक्स और गॉस का नियम</h3>
+        <p>पूरे गोले का क्षेत्रफल $4\pi r^2$ है। गॉस के नियम ($\Phi = q/\epsilon_0$) को लगाने पर:</p>
+        $$E \cdot (4\pi r^2) = \frac{q}{\epsilon_0}$$
+        <p>पक्षांतर (Transfer) करने पर फाइनल फार्मूला:</p>
+        <div style="font-size: 1.5rem; text-align: center; color: var(--accent);">
+            $$E = \frac{1}{4\pi\epsilon_0} \cdot \frac{q}{r^2}$$
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // --- 3D LAB LOGIC ---
+    let scene, camera, renderer, controls, surface, daGroup;
+    const lab = document.getElementById('lab-container');
+
+    function startLab() {
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(75, lab.clientWidth / lab.clientHeight, 0.1, 1000);
+        camera.position.set(4, 3, 5);
+
+        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(lab.clientWidth, lab.clientHeight);
+        lab.appendChild(renderer.domElement);
+
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+
+        const charge = new THREE.Mesh(
+            new THREE.SphereGeometry(0.2, 32, 32),
+            new THREE.MeshBasicMaterial({ color: 0xff4444 })
+        );
+        scene.add(charge);
+
+        daGroup = new THREE.Group();
+        scene.add(daGroup);
+
+        update(2.5);
+        animate();
+    }
+
+    function update(r) {
+        if(surface) scene.remove(surface);
+        daGroup.clear();
+
+        surface = new THREE.Mesh(
+            new THREE.SphereGeometry(r, 24, 24),
+            new THREE.MeshBasicMaterial({ color: 0x00d2ff, wireframe: true, transparent: true, opacity: 0.2 })
+        );
+        scene.add(surface);
+
+        const patch = new THREE.Mesh(
+            new THREE.PlaneGeometry(0.4, 0.4),
+            new THREE.MeshBasicMaterial({ color: 0xffeb3b, side: THREE.DoubleSide })
+        );
+        patch.position.set(r, 0, 0);
+        patch.rotation.y = Math.PI / 2;
+        daGroup.add(patch);
+
+        const dir = new THREE.Vector3(1, 0, 0);
+        const origin = new THREE.Vector3(r, 0, 0);
+        daGroup.add(new THREE.ArrowHelper(dir, origin, 1.4, 0xffffff, 0.3, 0.15)); // E
+        daGroup.add(new THREE.ArrowHelper(dir, origin, 0.8, 0xffeb3b, 0.2, 0.1)); // dA
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+        controls.update();
+        renderer.render(scene, camera);
+    }
+
+    document.getElementById('r-slider').oninput = function() {
+        document.getElementById('r-val').innerText = this.value;
+        update(parseFloat(this.value));
+    };
+
+    window.onload = () => { setTimeout(startLab, 100); };
+    window.onresize = () => {
+        camera.aspect = lab.clientWidth / lab.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(lab.clientWidth, lab.clientHeight);
+    };
+</script>
+
+</body>
+</html>
