@@ -3,72 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5171198736201288"
-     crossorigin="anonymous"></script>
     <title>chartleap Royal Test Center - Free Online Quizzes for Class 9-12</title>
     <meta name="description" content="Apne exams ki taiyari karein hamare free online test center ke saath. Class 9-12 ke liye Maths, Science aur English ke chapter-wise tests aur instant results.">
     <meta name="keywords" content="online test for class 10, class 12 physics quiz, free mock test cbse, chartleap test center, online exam practice">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="royal.css">
-    <link rel="icon" type="image/jpeg" href="logo.png">
-    <link rel="apple-touch-icon" href="logo.png">
+    <link rel="icon" type="image/jpeg" href="logo.jpeg">
+    <link rel="apple-touch-icon" href="logo.jpeg">
+    
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <link rel="canonical" href="https://www.chartleap.online/test.html" />
 
     <style>
-        /* Base styles already provided by user */
-        .navigation {
-            margin-top: 2rem;
-            text-align: center;
-        }
-        .navigation button {
-            padding: 10px 24px;
-            margin: 0 12px;
-            font-size: 1.1rem;
-            cursor: pointer;
-            background: #d4af37;
-            color: black;
-            border: none;
-            border-radius: 6px;
-        }
-        .navigation button:hover {
-            background: #b8972e;
-        }
-        .question {
-            margin: 1.5rem 0;
-            padding: 1rem;
-            background: rgba(255,255,255,0.08);
-            border-radius: 8px;
-        }
-        .back-btn {
-            background: #444;
-            color: white;
-            padding: 8px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
+        .navigation { margin-top: 2rem; text-align: center; }
+        .navigation button { padding: 10px 24px; margin: 0 12px; font-size: 1.1rem; cursor: pointer; background: #d4af37; color: black; border: none; border-radius: 6px; }
+        .navigation button:hover { background: #b8972e; }
+        .question { margin: 1.5rem 0; padding: 1rem; background: rgba(255,255,255,0.08); border-radius: 8px; }
+        .back-btn { background: #444; color: white; padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px; }
         .stat p { font-size: 1.5rem; font-weight: bold; color: #d4af37; }
         .result-stats { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
         .stat { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; min-width: 120px; }
     </style>
 </head>
 <body>
-    <script>(function(s){s.dataset.zone='10494579',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
     <header>
-        <div class="logo">
-            <img src="logo.png" alt="chartleap Logo">
-            <span>chartleap</span>
-        </div>
+        <div class="logo"><img src="logo.jpeg" alt="chartleap Logo"> <span>chartleap</span></div>
         <nav>
             <a href="index.html"><button class="nav-btn">🏠 Home</button></a>
             <a href="graph.html"><button class="nav-btn">📈 Graph Plotter</button></a>
             <a href="simulations.html"><button class="nav-btn">🔬 Simulations</button></a>
-            <a href="notes.html"><button class="nav-btn">📝 Notes</button></a>
-            <a href="test.html"><button class="nav-btn">📋 Test</button></a>
+            <a href="Notes.html"><button class="nav-btn">📝 Notes</button></a>
+            <a href="Test.html"><button class="nav-btn">📋 Test</button></a>
         </nav>
     </header>
 
@@ -101,7 +75,6 @@
         <div id="quizSection" style="display:none;">
             <h2 id="quizTitle"></h2>
             <div id="timer" style="font-size:1.3rem; margin:1rem 0; color:#d4af37;"></div>
-
             <div id="quizForm" class="quiz-container">
                 <div id="questions"></div>
                 <div class="navigation">
@@ -110,7 +83,6 @@
                     <button type="button" id="submitQuizBtn" onclick="submitQuiz()" style="background: #28a745; color: white;">Submit Quiz</button>
                 </div>
             </div>
-
             <div id="result" style="display:none; text-align: center;">
                 <h2>Your Result</h2>
                 <div class="result-stats">
@@ -120,9 +92,7 @@
                     <div class="stat"><h3>Time Taken</h3><p id="timeTaken"></p></div>
                     <div class="stat"><h3>Correct/Wrong</h3><p id="correctWrong"></p></div>
                 </div>
-                <div style="max-width: 400px; margin: 20px auto;">
-                    <canvas id="resultChart"></canvas>
-                </div>
+                <div style="max-width: 400px; margin: 20px auto;"><canvas id="resultChart"></canvas></div>
                 <button class="back-btn" onclick="backToChapters()">← Back to Chapters</button>
                 <button class="back-btn" onclick="viewHistory()" style="background: #d4af37; color: black;">View History</button>
             </div>
@@ -139,12 +109,7 @@
             <table id="historyTable" border="1" style="width:100%; border-collapse: collapse; margin-top:20px; color: white;">
                 <thead>
                     <tr style="background: #d4af37; color: black;">
-                        <th>Date</th>
-                        <th>Class</th>
-                        <th>Subject</th>
-                        <th>Chapter</th>
-                        <th>Score</th>
-                        <th>%</th>
+                        <th>Date</th><th>Class</th><th>Subject</th><th>Chapter</th><th>Score</th><th>%</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -154,6 +119,8 @@
     </main>
 
     <script>
+        // --- Questions Data ---
+        // Note: Make sure math formulas are inside $ signs, e.g., "The value of 0.$\overline{7}$ is:"
         // --- Questions Data (Minimal set for logic, user data will be included) ---
         const questionsData = {
     9: {
@@ -9832,15 +9799,12 @@
 };
 
 
-        // --- GLOBAL VARIABLES ---
+
         let selectedClass, selectedSubject, selectedChapter, startTime, quizTimer;
         let currentQuestions = [];
         let currentQuestionIndex = 0;
         let userAnswers = [];
         let resultChartInstance = null;
-        let historyChartInstance = null;
-
-        // Load History from LocalStorage
         let quizHistory = JSON.parse(localStorage.getItem('quizHistory') || '[]');
 
         function initSlideshow() {
@@ -9871,11 +9835,6 @@
             `).join('');
         }
 
-        function backToClasses() {
-            document.getElementById('subjects').style.display = 'none';
-            document.getElementById('classes').style.display = 'block';
-        }
-
         function selectSubject(sub) {
             selectedSubject = sub;
             document.getElementById('subjects').style.display = 'none';
@@ -9890,53 +9849,36 @@
             `).join('');
         }
 
-        function backToSubjects() {
-            document.getElementById('chapters').style.display = 'none';
-            document.getElementById('subjects').style.display = 'block';
-        }
-
         function startQuiz(chapter) {
             selectedChapter = chapter;
             let allQuestions = questionsData[selectedClass][selectedSubject][chapter] || [];
-            
-            if (allQuestions.length === 0) {
-                alert("Soon more questions will be added!");
-                return;
-            }
-
-            // Shuffle and Pick 20
+            if (allQuestions.length === 0) { alert("Soon more questions will be added!"); return; }
             currentQuestions = [...allQuestions].sort(() => 0.5 - Math.random()).slice(0, 20);
             userAnswers = new Array(currentQuestions.length).fill(null);
             currentQuestionIndex = 0;
-
             document.getElementById('chapters').style.display = 'none';
             document.getElementById('quizSection').style.display = 'block';
             document.getElementById('quizForm').style.display = 'block';
             document.getElementById('result').style.display = 'none';
             document.getElementById('quizTitle').textContent = `${chapter} - Class ${selectedClass}`;
-
             displayQuestion();
             startTimer();
         }
 
         function startTimer() {
-            let timeLeft = 20 * 60; // 20 minutes
+            let timeLeft = 20 * 60;
             startTime = Date.now();
-            const timerDisplay = document.getElementById('timer');
             if (quizTimer) clearInterval(quizTimer);
-            
             quizTimer = setInterval(() => {
                 let min = Math.floor(timeLeft / 60);
                 let sec = timeLeft % 60;
-                timerDisplay.textContent = `Time Remaining: ${min}:${sec.toString().padStart(2, '0')}`;
-                if (timeLeft <= 0) {
-                    clearInterval(quizTimer);
-                    submitQuiz();
-                }
+                document.getElementById('timer').textContent = `Time Remaining: ${min}:${sec.toString().padStart(2, '0')}`;
+                if (timeLeft <= 0) { clearInterval(quizTimer); submitQuiz(); }
                 timeLeft--;
             }, 1000);
         }
 
+        // 2. Updated displayQuestion function (RE-RENDERS MATH)
         function displayQuestion() {
             const container = document.getElementById('questions');
             const q = currentQuestions[currentQuestionIndex];
@@ -9959,8 +9901,10 @@
             document.getElementById('prevBtn').style.visibility = currentQuestionIndex === 0 ? 'hidden' : 'visible';
             document.getElementById('nextBtn').style.display = currentQuestionIndex === currentQuestions.length - 1 ? 'none' : 'inline-block';
             document.getElementById('submitQuizBtn').style.display = currentQuestionIndex === currentQuestions.length - 1 ? 'inline-block' : 'none';
+
+            // IMPORTANT: Tell MathJax to process the new question content
             if (window.MathJax) {
-                MathJax.typesetPromise();
+                MathJax.typesetPromise([container]);
             }
         }
 
@@ -9969,56 +9913,27 @@
             if (selected) userAnswers[currentQuestionIndex] = selected.value;
         }
 
-        function nextQuestion() {
-            saveAnswer();
-            currentQuestionIndex++;
-            displayQuestion();
-        }
-
-        function prevQuestion() {
-            saveAnswer();
-            currentQuestionIndex--;
-            displayQuestion();
-        }
+        function nextQuestion() { saveAnswer(); currentQuestionIndex++; displayQuestion(); }
+        function prevQuestion() { saveAnswer(); currentQuestionIndex--; displayQuestion(); }
 
         function submitQuiz() {
             saveAnswer();
             clearInterval(quizTimer);
-
             let score = 0;
-            currentQuestions.forEach((q, idx) => {
-                if (userAnswers[idx] === q.correct) score++;
-            });
-
+            currentQuestions.forEach((q, idx) => { if (userAnswers[idx] === q.correct) score++; });
             const total = currentQuestions.length;
             const percent = ((score / total) * 100).toFixed(1);
             const timeTakenSec = Math.floor((Date.now() - startTime) / 1000);
             const timeStr = `${Math.floor(timeTakenSec/60)}m ${timeTakenSec % 60}s`;
-
-            // Display Results
             document.getElementById('scoreVal').textContent = score;
             document.getElementById('total').textContent = total;
             document.getElementById('percentage').textContent = percent + "%";
             document.getElementById('timeTaken').textContent = timeStr;
             document.getElementById('correctWrong').textContent = `${score} Correct / ${total - score} Wrong`;
-
             document.getElementById('quizForm').style.display = 'none';
             document.getElementById('result').style.display = 'block';
-
-            // Save to History
-            const record = {
-                date: new Date().toLocaleDateString(),
-                class: selectedClass,
-                subject: selectedSubject,
-                chapter: selectedChapter,
-                score: score,
-                percent: percent,
-                time: timeStr
-            };
-            quizHistory.push(record);
+            quizHistory.push({ date: new Date().toLocaleDateString(), class: selectedClass, subject: selectedSubject, chapter: selectedChapter, score: score, percent: percent, time: timeStr });
             localStorage.setItem('quizHistory', JSON.stringify(quizHistory));
-
-            // Render Chart
             renderResultChart(score, total - score);
         }
 
@@ -10027,14 +9942,7 @@
             if (resultChartInstance) resultChartInstance.destroy();
             resultChartInstance = new Chart(ctx, {
                 type: 'doughnut',
-                data: {
-                    labels: ['Correct', 'Wrong'],
-                    datasets: [{
-                        data: [correct, wrong],
-                        backgroundColor: ['#28a745', '#dc3545'],
-                        borderWidth: 0
-                    }]
-                },
+                data: { labels: ['Correct', 'Wrong'], datasets: [{ data: [correct, wrong], backgroundColor: ['#28a745', '#dc3545'], borderWidth: 0 }] },
                 options: { plugins: { legend: { labels: { color: 'white' } } } }
             });
         }
@@ -10042,63 +9950,22 @@
         function viewHistory() {
             document.getElementById('quizSection').style.display = 'none';
             document.getElementById('historySection').style.display = 'block';
-
             document.getElementById('totalQuizzes').textContent = quizHistory.length;
             const avg = quizHistory.length ? (quizHistory.reduce((a, b) => a + parseFloat(b.percent), 0) / quizHistory.length).toFixed(1) : 0;
             document.getElementById('avgScore').textContent = avg + "%";
             const best = quizHistory.length ? Math.max(...quizHistory.map(h => parseFloat(h.percent))) : 0;
             document.getElementById('bestScore').textContent = best + "%";
-
             const tbody = document.querySelector('#historyTable tbody');
-            tbody.innerHTML = quizHistory.slice().reverse().map(h => `
-                <tr>
-                    <td>${h.date}</td>
-                    <td>${h.class}</td>
-                    <td>${h.subject}</td>
-                    <td>${h.chapter}</td>
-                    <td>${h.score}</td>
-                    <td>${h.percent}%</td>
-                </tr>
-            `).join('');
+            tbody.innerHTML = quizHistory.slice().reverse().map(h => `<tr><td>${h.date}</td><td>${h.class}</td><td>${h.subject}</td><td>${h.chapter}</td><td>${h.score}</td><td>${h.percent}%</td></tr>`).join('');
         }
 
-        function backToChapters() {
-            document.getElementById('quizSection').style.display = 'none';
-            document.getElementById('chapters').style.display = 'block';
-        }
+        function backToClasses() { document.getElementById('subjects').style.display = 'none'; document.getElementById('classes').style.display = 'block'; }
+        function backToSubjects() { document.getElementById('chapters').style.display = 'none'; document.getElementById('subjects').style.display = 'block'; }
+        function backToChapters() { document.getElementById('quizSection').style.display = 'none'; document.getElementById('chapters').style.display = 'block'; }
+        function backToResult() { document.getElementById('historySection').style.display = 'none'; document.getElementById('quizSection').style.display = 'block'; }
 
-        function backToResult() {
-            document.getElementById('historySection').style.display = 'none';
-            document.getElementById('quizSection').style.display = 'block';
-        }
-
-        // Initialize
         loadClasses();
         initSlideshow();
     </script>
 </body>
-<footer>
-    <div style="max-width: 1200px; margin: auto; padding: 0 20px;">
-        
-        <h3 style="margin-bottom: 15px;">ChartLeap</h3>
-        
-        <hr style="border: 0; border-top: 1px solid #444; margin: 20px 0;">
-        
-        <div style="margin-bottom: 20px;">
-            <a href="/about-us" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 14px;">About Us</a>
-            <a href="/privacy-policy" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 14px;">Privacy Policy</a>
-            <a href="/terms-and-conditions" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 14px;">Terms & Conditions</a>
-            <a href="/contact-us" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 14px;">Contact Us</a>
-            <a href="/Disclaimer.html" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 14px;">disclaimer</a>
-
-        </div>
-        
-        <p style="font-size: 13px; color: #888; margin: 0;">
-            &copy; 2026 ChartLeap (chartleap.online).
-        </p>
-        
-      </div>
-</footer>
-
 </html>
-
