@@ -13,6 +13,8 @@
     <link rel="icon" type="image/jpeg" href="logo.png">
     <link rel="apple-touch-icon" href="logo.png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="canonical" href="https://www.chartleap.online/test.html" />
 
     <style>
@@ -9957,6 +9959,9 @@
             document.getElementById('prevBtn').style.visibility = currentQuestionIndex === 0 ? 'hidden' : 'visible';
             document.getElementById('nextBtn').style.display = currentQuestionIndex === currentQuestions.length - 1 ? 'none' : 'inline-block';
             document.getElementById('submitQuizBtn').style.display = currentQuestionIndex === currentQuestions.length - 1 ? 'inline-block' : 'none';
+            if (window.MathJax) {
+                MathJax.typesetPromise();
+            }
         }
 
         function saveAnswer() {
