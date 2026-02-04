@@ -583,3 +583,77 @@ footer {
     padding: 20px;
     margin-top: auto;
 }
+
+
+
+/* Mobile Responsive Styles */
+@media screen and (max-width: 768px) {
+    header {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .logo {
+        font-size: 1.5rem;
+    }
+
+    .logo img {
+        width: 40px;
+        height: 40px;
+    }
+
+    nav {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .nav-btn {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    .intro-overlay h1 {
+        font-size: 2rem;
+    }
+
+    .intro-buttons {
+        flex-direction: column;
+        gap: 15px;
+        padding: 0 20px;
+    }
+
+    .btn-primary {
+        width: 100%;
+        padding: 12px 20px;
+        font-size: 1.1rem;
+    }
+
+    .container {
+        grid-template-columns: 1fr; /* Mobile par cards ek ke niche ek aayenge */
+        padding: 0 1rem;
+    }
+
+    .card {
+        padding: 1.2rem;
+    }
+
+    #simulation-list {
+        grid-template-columns: 1fr;
+        padding: 15px;
+    }
+
+    .modal-content {
+        width: 95%;
+        height: 80vh;
+    }
+}
