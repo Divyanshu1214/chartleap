@@ -41,8 +41,8 @@ nav { display: flex; gap: 1.2rem; }
 .nav-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(212,175,55,0.5); }
 main { max-width: 1400px; margin: 2rem auto; padding: 0 1.5rem; }
 .slideshow {
-    height: 38vh;
-    min-height: 260px;
+    height: 45vh;
+    min-height: 265px;
     position: relative;
     overflow: hidden;
     border-radius: 16px;
