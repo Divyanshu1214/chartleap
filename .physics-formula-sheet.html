@@ -4,16 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>Class 12 Physics All Formula PDF Hindi Medium | UP Board 2026 - Chartleap</title>
-    <meta name="description" content="कक्षा 12 भौतिक विज्ञान के सभी महत्वपूर्ण सूत्र (Physics Formulas) एक ही PDF में। UP Board 2026 की तैयारी के लिए सबसे बेस्ट Formula Sheet. अभी डाउनलोड करें Chartleap पर।">
-    <meta name="keywords" content="Class 12 Physics Formula PDF, भौतिक विज्ञान सूत्र कक्षा 12, Physics formula sheet for UP Board, Chartleap Physics PDF, NCERT Physics Formulas Hindi, Class 12 Physics Formula Sheet PDF Download">
-    <meta name="author" content="Chartleap">
+    <title>Class 12 Physics Formula Sheet PDF Download | Chartleap</title>
+    <meta name="title" content="Class 12 Physics Formula Sheet PDF | Chartleap">
+    <meta name="description" content="Class 12 Physics ke saare formulas chapter-wise! Best for Board Exams (CBSE/UP). Download professional PDF and interactive formula guide at Chartleap.">
+    <meta name="keywords" content="Physics Formula Sheet, Class 12 Physics Formulas, Physics PDF Download, Chartleap Physics, Electrostatics Formulas, Optics Formulas, Class 12 Physics UP Board">
 
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://chartleap.online/PHF.html">
+    <meta property="og:url" content="https://chartleap.online/physics-formula-sheet.html">
     <meta property="og:title" content="Class 12 Physics Royal Formula Sheet | Chartleap">
-    <meta property="og:description" content="Master Physics formulas with Chartleap's royal guide. Chapter-wise PDF available for UP Board Students.">
-    <meta property="og:image" content="logo.png">
+    <meta property="og:description" content="All Physics formulas in one royal guide. Interactive, easy to search, and downloadable PDF.">
+    <meta property="og:image" content="https://chartleap.online/logo.png">
 
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
@@ -26,8 +26,8 @@
         {
             "@context": "https://schema.org/",
             "@type": "Course",
-            "name": "Class 12 Physics Formula Guide (Hindi Medium)",
-            "description": "Comprehensive chapter-wise formula sheet for Class 12 Physics students of UP Board and CBSE.",
+            "name": "Class 12 Physics Formula Guide",
+            "description": "Comprehensive chapter-wise formula sheet for Class 12 Physics students.",
             "provider": {
                 "@type": "Organization",
                 "name": "Chartleap",
@@ -85,10 +85,6 @@
         .note { background: rgba(212, 175, 55, 0.1); padding: 10px; border-radius: 8px; font-size: 0.85rem; border-left: 3px solid var(--royal-gold); }
         .imp-tag { position: absolute; top: 0; right: 0; background: #8b0000; color: #fff; padding: 4px 12px; font-size: 0.7rem; font-weight: 800; border-bottom-left-radius: 12px; }
 
-        /* SEO Section Styling */
-        .seo-content { max-width: 1200px; margin: 3rem auto; padding: 2rem; background: rgba(255,255,255,0.03); border-radius: 15px; border: 1px solid rgba(212,175,55,0.1); line-height: 1.6; }
-        .seo-content h2 { color: var(--royal-gold); margin-bottom: 1rem; }
-
         .cl-modal-overlay {
             position: fixed; inset: 0; background: rgba(5, 10, 25, 0.9); backdrop-filter: blur(8px);
             display: flex; align-items: center; justify-content: center; z-index: 2000;
@@ -109,15 +105,10 @@
         .cl-modal-btn { background: var(--gold-gradient); color: #0a1428; border: none; padding: 12px 35px; border-radius: 50px; font-weight: 800; cursor: pointer; transition: 0.3s; }
         .cl-modal-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(212, 175, 55, 0.4); }
 
-        @media print { header, .search-container, .chapter-nav, .seo-content { display: none; } }
+        @media print { header, .search-container, .chapter-nav { display: none; } }
     </style>
 </head>
 <body>
-
-<div style="display:none;">
-    <h1>Class 12 Physics All Formulas Chapter-wise PDF for UP Board & Hindi Medium</h1>
-    <p>Is page par Class 12 Physics ke saare formula notes hindi me diye gaye hain. Electrostatics, Magnetism, Optics aur sabhi chapters ke sutra yahan available hain.</p>
-</div>
 
 <div class="watermark">CHARTLEAP</div>
 
@@ -132,7 +123,7 @@
 
 <header>
     <a href="https://chartleap.online" class="logo">
-        <img src="logo.png" alt="Chartleap Class 12 Physics Study Material"> CHARTLEAP
+        <img src="logo.png" alt="Chartleap Official Logo"> CHARTLEAP
     </a>
     <button class="nav-btn" onclick="exportPDF()">
         <i data-lucide="download"></i> Download PDF
@@ -141,26 +132,19 @@
 
 <div class="search-container">
     <i data-lucide="search" class="search-icon"></i>
-    <input type="text" id="formulaSearch" placeholder="Search Physics Formulas (e.g. Gauss, Ohm)..." onkeyup="filterFormulas()">
+    <input type="text" id="formulaSearch" placeholder="Search formulas (e.g. Gauss, Ohm, Coulomb)..." onkeyup="filterFormulas()">
 </div>
 
 <div class="chapter-nav" id="chapterNav"></div>
-
 <main class="container" id="formulaContainer"></main>
 
-<section class="container seo-content">
-    <h2>Class 12 Physics Formula Sheet in Hindi</h2>
-    <p>Agar aap <b>UP Board Class 12 Physics</b> ki taiyari kar rahe hain, toh yeh <b>Royal Formula Sheet</b> aapke liye sabse best hai. Isme humne NCERT ke sabhi important chapters cover kiye hain:
-    <ul>
-        <li>Electric Charges and Fields (वैद्युत आवेश तथा क्षेत्र)</li>
-        <li>Current Electricity (धारा वैद्युत)</li>
-        <li>Ray Optics and Wave Optics (किरण एवं तरंग प्रकाशिकी)</li>
-        <li>Modern Physics (आधुनिक भौतिकी)</li>
-    </ul>
-    Aap ise <b>PDF Download</b> karke offline revision bhi kar sakte hain. Chartleap hamesha aapki padhai me madad karta hai.</p>
-</section>
+<div style="display:none;">
+    <h2>Class 12 Physics Formulas for UP Board and CBSE</h2>
+    <p>Get all physics formulas like Coulomb's Law, Gauss Theorem, Ohm's Law, and Lens Maker formula in one place.</p>
+</div>
 
 <script>
+// Data remains the same as your previous version
 const physicsData = [
     {
         unit: "Unit 1", name: "Electrostatics", id: "unit1",
@@ -369,14 +353,16 @@ function exportPDF() {
     };
 
     html2pdf().set(opt).from(element).save().then(() => {
-        const activeUnitId = document.querySelector('.unit-btn.active').textContent;
+        const activeUnitBtn = document.querySelector('.unit-btn.active');
+        const activeUnitName = activeUnitBtn.textContent;
+        
         document.querySelectorAll('.unit-section').forEach(s => {
-            s.style.display = s.previousElementSibling && s.id.includes(activeUnitId) ? 'block' : 'none';
+            s.style.display = s.innerHTML.includes(activeUnitName) ? 'block' : 'none';
         });
         
         downloadBtn.innerHTML = originalContent;
         lucide.createIcons();
-        showModal("Aapki PDF सफलतापूर्वक डाउनलोड हो रही है!");
+        showModal("Aapki PDF 'Chartleap_Physics_Pro.pdf' successfully download ho rahi hai!");
     });
 }
 
