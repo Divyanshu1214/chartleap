@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <title>Class 12 Chemistry Royal Formula Sheet | Chartleap</title>
+    <meta name="description" content="Class 12 Chemistry ke saare formulas, reactions aur equations chapter-wise! Board Exams ke liye best guide.">
+
+    <style>
+        :root {
+            --royal-gold: #d4af37;
+            --royal-blue-dark: #0a1428;
+            --royal-blue-light: #112347;
+            --gold-gradient: linear-gradient(90deg, #d4af37, #e8c670);
+            --bg-gradient: linear-gradient(135deg, #0a1428 0%, #001233 50%, #0a1428 100%);
+            --card-shadow: 0 12px 35px rgba(0,0,0,0.5);
+            --transition: all 0.4s ease;
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; scroll-behavior:smooth; }
+        body { font-family: 'Montserrat', sans-serif; background: var(--bg-gradient); color: #f0f0ff; min-height: 100vh; }
+
+        .watermark { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) rotate(-35deg); font-size:8vw; font-weight:800; color:rgba(212,175,55,0.05); pointer-events:none; z-index:-1; font-family: 'Cinzel', serif; }
+
+        header { background: linear-gradient(to bottom, rgba(10, 20, 40, 0.95), rgba(0, 18, 51, 0.95)); backdrop-filter: blur(10px); padding: 0.8rem 5%; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 8px 30px rgba(0,0,0,0.6); border-bottom: 1px solid rgba(212,175,55,0.3); }
+        .logo { display: flex; align-items: center; font-family: 'Cinzel', serif; font-size: 1.8rem; color: var(--royal-gold); text-shadow: 0 3px 12px rgba(212,175,55,0.4); text-decoration: none; }
+        
+        .nav-btn { background: var(--gold-gradient); color: #0a1428; border: none; padding: 10px 24px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 8px; }
+        .nav-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(212,175,55,0.5); }
+
+        .search-container { position: relative; margin: 2rem auto; max-width: 600px; padding: 0 1.5rem; }
+        #formulaSearch { width: 100%; padding: 14px 20px 14px 50px; border-radius: 50px; border: 1px solid rgba(212,175,55,0.5); background: rgba(10, 20, 40, 0.7); color: #fff; outline: none; transition: 0.3s; }
+        .search-icon { position: absolute; left: 35px; top: 15px; color: var(--royal-gold); }
+
+        .chapter-nav { display: flex; gap: 12px; overflow-x: auto; padding: 1rem 5%; background: rgba(10, 20, 40, 0.5); scrollbar-width: none; }
+        .chapter-nav::-webkit-scrollbar { display: none; }
+        .unit-btn { background: transparent; border: 1px solid var(--royal-gold); color: var(--royal-gold); padding: 8px 20px; border-radius: 30px; font-weight: 600; cursor: pointer; transition: 0.3s; white-space: nowrap; }
+        .unit-btn.active { background: var(--gold-gradient); color: #0a1428; border: none; }
+
+        .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+        .formula-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 2rem; }
+
+        .card { background: linear-gradient(145deg, #112347, #0a1a38); border: 1px solid rgba(212,175,55,0.2); border-radius: 16px; padding: 1.8rem; position: relative; overflow: hidden; transition: var(--transition); box-shadow: var(--card-shadow); break-inside: avoid; }
+        .card:hover { transform: translateY(-10px); border-color: var(--royal-gold); box-shadow: 0 20px 50px rgba(212,175,55,0.25); }
+        .card h3 { font-family: 'Cinzel', serif; color: var(--royal-gold); margin-bottom: 10px; font-size: 1.1rem; }
+        .formula-box { background: rgba(10, 20, 40, 0.6); padding: 1.2rem; border-radius: 12px; border: 1px solid rgba(212,175,55,0.1); margin: 15px 0; text-align: center; font-size: 1.2rem; overflow-x: auto; color: #fff; }
+        .note { background: rgba(212, 175, 55, 0.1); padding: 10px; border-radius: 8px; font-size: 0.85rem; border-left: 3px solid var(--royal-gold); line-height: 1.4; }
+        .imp-tag { position: absolute; top: 0; right: 0; background: #8b0000; color: #fff; padding: 4px 12px; font-size: 0.7rem; font-weight: 800; border-bottom-left-radius: 12px; }
+
+        .cl-modal-overlay {
+            position: fixed; inset: 0; background: rgba(5, 10, 25, 0.9); backdrop-filter: blur(8px);
+            display: flex; align-items: center; justify-content: center; z-index: 2000;
+            opacity: 0; visibility: hidden; transition: 0.3s ease;
+        }
+        .cl-modal-overlay.active { opacity: 1; visibility: visible; }
+        .cl-modal {
+            background: linear-gradient(135deg, #0f1e3a, #0a1428);
+            border: 2px solid var(--royal-gold); border-radius: 24px;
+            padding: 40px; width: 90%; max-width: 450px; text-align: center;
+            box-shadow: 0 0 50px rgba(212, 175, 55, 0.3);
+            transform: scale(0.8); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .cl-modal-overlay.active .cl-modal { transform: scale(1); }
+        .cl-modal-btn { background: var(--gold-gradient); color: #0a1428; border: none; padding: 12px 35px; border-radius: 50px; font-weight: 800; cursor: pointer; margin-top: 20px; }
+
+        @media print { 
+            header, .search-container, .chapter-nav, .cl-modal-overlay { display: none !important; } 
+            body { background: white !important; color: black !important; }
+            .card { border: 1px solid #ddd !important; box-shadow: none !important; background: white !important; color: black !important; }
+            .formula-box { background: #f9f9f9 !important; border: 1px solid #ccc !important; color: black !important; }
+            .note { color: #333 !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="watermark">CHARTLEAP</div>
+
+<div class="cl-modal-overlay" id="downloadModal">
+    <div class="cl-modal">
+        <div style="font-size: 3rem; color: var(--royal-gold); margin-bottom: 15px;"><i data-lucide="award"></i></div>
+        <h2>Chartleap Chemistry</h2>
+        <p id="modalMessage">Aapki "Chemistry Pro Sheet" ready hai!</p>
+        <button class="cl-modal-btn" onclick="closeModal()">Sahi Hai!</button>
+    </div>
+</div>
+
+<header>
+    <a href="#" class="logo">CHARTLEAP</a>
+    <button class="nav-btn" onclick="exportPDF()">
+        <i data-lucide="file-down"></i> Chemistry PDF
+    </button>
+</header>
+
+<div class="search-container">
+    <i data-lucide="search" class="search-icon"></i>
+    <input type="text" id="formulaSearch" placeholder="Search (Raoult, Nernst, SN1, Haloalkane)..." onkeyup="filterFormulas()">
+</div>
+
+<div class="chapter-nav" id="chapterNav"></div>
+<main class="container" id="formulaContainer"></main>
+
+<script>
+const chemistryData = [
+    {
+        unit: "Physical", name: "Physical Chemistry", id: "physical",
+        chapters: [
+            {
+                title: "Chapter 1: Solutions",
+                formulas: [
+                    {title:"Molarity (M)", latex:"M = \\frac{n_{solute}}{V_{solution(L)}}", note:"Temperature dependent unit", imp: true},
+                    {title:"Raoult's Law (Volatile)", latex:"P_{total} = P_A^0 x_A + P_B^0 x_B", note:"Ideal solutions follow this at all conc.", imp: true},
+                    {title:"Relative Lowering of V.P.", latex:"\\frac{P^0 - P_s}{P^0} = i \\cdot x_{solute}", note:"i = Van't Hoff factor", imp: true},
+                    {title:"Elevation in Boiling Point", latex:"\\Delta T_b = i \\cdot K_b \\cdot m", note:"m = molality, Kb = ebullioscopic constant", imp: true},
+                    {title:"Osmotic Pressure", latex:"\\pi = i \\cdot C R T", note:"Best for determining molar mass of polymers", imp: false}
+                ]
+            },
+            {
+                title: "Chapter 2: Electrochemistry",
+                formulas: [
+                    {title:"Nernst Equation", latex:"E_{cell} = E^0_{cell} - \\frac{0.059}{n} \\log Q", note:"Calculates potential at non-standard conditions", imp: true},
+                    {title:"Gibbs Free Energy", latex:"\\Delta G^0 = -n F E^0_{cell}", note:"-ve ΔG means spontaneous reaction", imp: true},
+                    {title:"Molar Conductivity", latex:"\\Lambda_m = \\frac{\\kappa \\times 1000}{M}", note:"Unit: S cm² mol⁻¹", imp: false},
+                    {title:"Kohlrausch's Law", latex:"\\Lambda_m^0 = \\nu_+ \\lambda_+^0 + \\nu_- \\lambda_-^0", note:"For limiting molar conductivity", imp: true},
+                    {title:"Faraday's 1st Law", latex:"w = Z I t = \\frac{E}{96500} I t", note:"Mass deposited during electrolysis", imp: false}
+                ]
+            },
+            {
+                title: "Chapter 3: Chemical Kinetics",
+                formulas: [
+                    {title:"Rate Law", latex:"Rate = k [A]^x [B]^y", note:"Order = x + y (Experimentally determined)", imp: true},
+                    {title:"Zero Order Rate Constant", latex:"k = \\frac{[R]_0 - [R]}{t}", note:"Half life: t_{1/2} = [R]_0 / 2k", imp: false},
+                    {title:"1st Order Rate Constant", latex:"k = \\frac{2.303}{t} \\log \\frac{[R]_0}{[R]}", note:"Half life: t_{1/2} = 0.693 / k", imp: true},
+                    {title:"Arrhenius Equation", latex:"k = A e^{-E_a/RT}", note:"Shows temp. effect on rate constant", imp: true}
+                ]
+            }
+        ]
+    },
+    {
+        unit: "Inorganic", name: "Inorganic Chemistry", id: "inorganic",
+        chapters: [
+            {
+                title: "Chapter 4 & 5: d-Block & Coordination",
+                formulas: [
+                    {title:"Magnetic Moment", latex:"\\mu = \\sqrt{n(n+2)} \\, BM", note:"n = number of unpaired electrons", imp: true},
+                    {title:"Effective Atomic Number", latex:"EAN = Z - ON + 2(CN)", note:"Stability check for complexes", imp: false},
+                    {title:"Crystal Field Splitting (Oh)", latex:"\\Delta_0 > P \\implies \\text{Low Spin}", note:"P is pairing energy", imp: true}
+                ]
+            }
+        ]
+    },
+    {
+        unit: "Organic", name: "Organic Chemistry", id: "organic",
+        chapters: [
+            {
+                title: "Chapter 6: Haloalkanes & Haloarenes",
+                formulas: [
+                    {title:"SN1 Reaction", latex:"Rate \\propto [Substrate]", note:"2 steps, Carbocation intermediate, Racemisation", imp: true},
+                    {title:"SN2 Reaction", latex:"Rate \\propto [Substrate][Nu]", note:"1 step, Inversion of configuration (Walden)", imp: true},
+                    {title:"Finkelstein Reaction", latex:"R-X + NaI \\xrightarrow{Acetone} R-I + NaX", note:"Halogen exchange for Iodides", imp: false},
+                    {title:"Wurtz Fitting", latex:"Ar-X + RX + 2Na \\xrightarrow{Ether} Ar-R + 2NaX", note:"Synthesis of alkyl arenes", imp: false}
+                ]
+            },
+            {
+                title: "Chapter 8: Aldehydes & Ketones",
+                formulas: [
+                    {title:"Rosenmund Reduction", latex:"RCOCl \\xrightarrow{Pd/BaSO_4} RCHO", note:"Acid chloride to Aldehyde", imp: true},
+                    {title:"Aldol Condensation", latex:"\\alpha\\text{-H required}", note:"Forms \\beta-hydroxy aldehydes", imp: true},
+                    {title:"Cannizzaro Reaction", latex:"\\text{No } \\alpha\\text{-H required}", note:"Self redox: Alcohol + Salt of Acid", imp: true}
+                ]
+            }
+        ]
+    }
+];
+
+function initApp() {
+    const nav = document.getElementById('chapterNav');
+    const container = document.getElementById('formulaContainer');
+    
+    physicsData = chemistryData; // Use the chemistry data
+
+    physicsData.forEach((unit, idx) => {
+        const btn = document.createElement('button');
+        btn.className = `unit-btn ${idx===0?'active':''}`;
+        btn.textContent = unit.name;
+        btn.onclick = (e) => {
+            document.querySelectorAll('.unit-section').forEach(s => s.style.display = 'none');
+            document.querySelectorAll('.unit-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(unit.id).style.display = 'block';
+            e.target.classList.add('active');
+        };
+        nav.appendChild(btn);
+
+        let html = `<div class="unit-section" id="${unit.id}" style="display:${idx===0?'block':'none'}">
+            <h2 style="text-align:left; margin-bottom:2rem; font-family:'Cinzel'; color:var(--royal-gold); border-bottom: 1px solid rgba(212,175,55,0.2); padding-bottom:10px;">${unit.name} Section</h2>
+            <div class="formula-grid">`;
+
+        unit.chapters.forEach(ch => {
+            ch.formulas.forEach(f => {
+                html += `
+                <div class="card" data-name="${f.title.toLowerCase()} ${ch.title.toLowerCase()}">
+                    ${f.imp ? '<div class="imp-tag">IMPORTANT</div>' : ''}
+                    <div style="font-size:0.7rem; color:rgba(212,175,55,0.7); margin-bottom:5px;">${ch.title.split(':')[0]}</div>
+                    <h3>${f.title}</h3>
+                    <div class="formula-box">$$${f.latex}$$</div>
+                    <div class="note">${f.note}</div>
+                </div>`;
+            });
+        });
+        html += `</div></div>`;
+        container.innerHTML += html;
+    });
+
+    lucide.createIcons();
+    renderMathInElement(document.body, { 
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "$", right: "$", display: false}
+        ] 
+    });
+}
+
+function filterFormulas() {
+    let q = document.getElementById('formulaSearch').value.toLowerCase();
+    document.querySelectorAll('.card').forEach(card => {
+        card.style.display = card.dataset.name.includes(q) ? 'block' : 'none';
+    });
+}
+
+function showModal(msg) {
+    document.getElementById('modalMessage').innerText = msg;
+    document.getElementById('downloadModal').classList.add('active');
+}
+function closeModal() {
+    document.getElementById('downloadModal').classList.remove('active');
+}
+
+function exportPDF() {
+    const element = document.getElementById('formulaContainer');
+    const downloadBtn = document.querySelector('.nav-btn');
+    const originalContent = downloadBtn.innerHTML;
+
+    downloadBtn.innerHTML = '<i data-lucide="loader"></i> Processing...';
+    lucide.createIcons();
+    
+    document.querySelectorAll('.unit-section').forEach(s => s.style.display = 'block');
+
+    const opt = { 
+        margin: [10, 5, 10, 5], 
+        filename: 'Chartleap_Chemistry_Class12.pdf', 
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
+    };
+
+    html2pdf().set(opt).from(element).save().then(() => {
+        const activeBtn = document.querySelector('.unit-btn.active');
+        const activeUnitName = activeBtn.textContent;
+        const activeUnitId = chemistryData.find(u => u.name === activeUnitName).id;
+        
+        document.querySelectorAll('.unit-section').forEach(s => {
+            s.style.display = s.id === activeUnitId ? 'block' : 'none';
+        });
+        
+        downloadBtn.innerHTML = originalContent;
+        lucide.createIcons();
+        showModal("Aapki Chemistry PDF successfully download ho gayi hai!");
+    });
+}
+
+window.onload = initApp;
+</script>
+</body>
+</html>
