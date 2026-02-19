@@ -4,6 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
+    <title>Class 12 Chemistry Formula Sheet PDF | Board, JEE & NEET Revision</title>
+    <meta name="title" content="Class 12 Chemistry Formula Sheet PDF | Board, JEE & NEET Revision">
+    <meta name="description" content="Download Class 12 Chemistry all formulas, named reactions & equations chapter-wise. Best PDF guide for CBSE Board Exams, JEE, and NEET preparation by Chartleap.">
+    <meta name="keywords" content="Class 12 Chemistry Formula PDF, Organic Chemistry Reactions, Physical Chemistry Formulas, Nernst Equation, Raoult's Law, Chartleap Chemistry, Chemistry Revision Notes">
+    <meta name="author" content="Chartleap">
+    <meta name="robots" content="index, follow">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://chartleap.com/chemistry-formula-sheet"> <meta property="og:title" content="Class 12 Chemistry Royal Formula Sheet - Chartleap">
+    <meta property="og:description" content="Saare important formulas aur reactions ek hi jagah. Board exams mein top karne ke liye best resource.">
+    <meta property="og:image" content="https://chartleap.com/preview-thumbnail.jpg">
+
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="Class 12 Chemistry Royal Formula Sheet">
+    <meta property="twitter:description" content="Chemistry revision made easy with Chartleap's Royal Formula Sheet. Download PDF now!">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org/",
+      "@type": "LearningResource",
+      "name": "Class 12 Chemistry Formula Sheet",
+      "description": "Complete formula sheet for Class 12 Chemistry covering Physical, Inorganic, and Organic sections.",
+      "learningResourceType": "Formula Sheet",
+      "educationalLevel": "Class 12",
+      "subjectOf": {
+        "@type": "Course",
+        "name": "Chemistry",
+        "description": "CBSE, JEE, NEET Chemistry Preparation"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "Chartleap"
+      }
+    }
+    </script>
+
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
@@ -11,9 +47,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     
-    <title>Class 12 Chemistry Royal Formula Sheet | Chartleap</title>
-    <meta name="description" content="Class 12 Chemistry ke saare formulas, reactions aur equations chapter-wise! Board Exams ke liye best guide.">
-
     <style>
         :root {
             --royal-gold: #d4af37;
@@ -82,6 +115,8 @@
 </head>
 <body>
 
+<h1 style="display:none;">Class 12 Chemistry All Formulas and Important Reactions PDF - Chartleap</h1>
+
 <div class="watermark">CHARTLEAP</div>
 
 <div class="cl-modal-overlay" id="downloadModal">
@@ -95,14 +130,14 @@
 
 <header>
     <a href="#" class="logo">CHARTLEAP</a>
-    <button class="nav-btn" onclick="exportPDF()">
+    <button class="nav-btn" onclick="exportPDF()" aria-label="Download Chemistry PDF">
         <i data-lucide="file-down"></i> Chemistry PDF
     </button>
 </header>
 
 <div class="search-container">
     <i data-lucide="search" class="search-icon"></i>
-    <input type="text" id="formulaSearch" placeholder="Search (Raoult, Nernst, SN1, Haloalkane)..." onkeyup="filterFormulas()">
+    <input type="text" id="formulaSearch" placeholder="Search (Raoult, Nernst, SN1, Haloalkane)..." onkeyup="filterFormulas()" aria-label="Search formulas">
 </div>
 
 <div class="chapter-nav" id="chapterNav"></div>
@@ -185,9 +220,7 @@ function initApp() {
     const nav = document.getElementById('chapterNav');
     const container = document.getElementById('formulaContainer');
     
-    physicsData = chemistryData; // Use the chemistry data
-
-    physicsData.forEach((unit, idx) => {
+    chemistryData.forEach((unit, idx) => {
         const btn = document.createElement('button');
         btn.className = `unit-btn ${idx===0?'active':''}`;
         btn.textContent = unit.name;
@@ -199,23 +232,23 @@ function initApp() {
         };
         nav.appendChild(btn);
 
-        let html = `<div class="unit-section" id="${unit.id}" style="display:${idx===0?'block':'none'}">
+        let html = `<section class="unit-section" id="${unit.id}" style="display:${idx===0?'block':'none'}">
             <h2 style="text-align:left; margin-bottom:2rem; font-family:'Cinzel'; color:var(--royal-gold); border-bottom: 1px solid rgba(212,175,55,0.2); padding-bottom:10px;">${unit.name} Section</h2>
             <div class="formula-grid">`;
 
         unit.chapters.forEach(ch => {
             ch.formulas.forEach(f => {
                 html += `
-                <div class="card" data-name="${f.title.toLowerCase()} ${ch.title.toLowerCase()}">
+                <article class="card" data-name="${f.title.toLowerCase()} ${ch.title.toLowerCase()}">
                     ${f.imp ? '<div class="imp-tag">IMPORTANT</div>' : ''}
                     <div style="font-size:0.7rem; color:rgba(212,175,55,0.7); margin-bottom:5px;">${ch.title.split(':')[0]}</div>
                     <h3>${f.title}</h3>
                     <div class="formula-box">$$${f.latex}$$</div>
                     <div class="note">${f.note}</div>
-                </div>`;
+                </article>`;
             });
         });
-        html += `</div></div>`;
+        html += `</div></section>`;
         container.innerHTML += html;
     });
 
