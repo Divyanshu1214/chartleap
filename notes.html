@@ -3,12 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5171198736201288"
-     crossorigin="anonymous"></script>
-    <title>chartleap Notes - Subject-wise Revision Notes for Class 9, 10, 11 & 12</title>
-    <meta name="description" content="Class 9-12 ke liye premium revision notes download karein. Physics, Chemistry aur Math ke chapter-wise PDF notes sabhi Indian students ke liye.">
-    <meta name="keywords" content="class 10 science notes, class 12 physics revision notes, free educational pdf, chartleap royal notes">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5171198736201288" crossorigin="anonymous"></script>
+    
+    <title>Class 9, 10, 11, 12 Notes PDF Download | All Subjects Revision Notes - ChartLeap</title>
+    <meta name="description" content="Download free chapter-wise revision notes for Class 9-12. Physics, Math, Science and English notes in PDF format. Best study material for Board Exams 2026.">
+    <meta name="keywords" content="class 12 notes pdf, class 10 science notes, physics handwritten notes, chartleap royal notes, free board exam notes">
     <link rel="canonical" href="https://www.chartleap.online/notes.html" />
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [{
+        "@type": "Question",
+        "name": "Are ChartLeap notes free to download?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, all revision notes for Class 9-12 on ChartLeap are 100% free to view and download in PDF format."
+        }
+      }]
+    }
+    </script>
+
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="royal.css">
     <link rel="icon" type="image/jpeg" href="logo.png">
@@ -16,9 +32,10 @@
 </head>
 <body>
     <script>(function(s){s.dataset.zone='10494579',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+    
     <header>
         <div class="logo">
-            <img src="logo.png" alt="chartleap Logo">
+            <img src="logo.png" alt="ChartLeap Logo">
             <span>chartleap</span>
         </div>
         <nav>
@@ -29,187 +46,124 @@
             <a href="test.html"><button class="nav-btn">📋 Test</button></a>
         </nav>
     </header>
+
     <main>
-        <h1>chartleap Royal Notes</h1>
-        <div class="subtitle">Premium Study Resources • Class 9–12</div>
+        <h1>ChartLeap Royal Notes</h1>
+        <div class="subtitle" style="text-align: center; font-family: 'Montserrat'; color: #666; margin-bottom: 20px;">
+            Premium Study Resources • Class 9–12 • Board Exam Special
+        </div>
+
         <div class="filters">
-            <input type="text" id="search" placeholder="Search Chapter..." oninput="runFilter()">
+            <input type="text" id="search" placeholder="Search Chapter (e.g. Physics)..." oninput="runFilter()">
             <select id="classF" onchange="runFilter()">
                 <option value="">All Classes</option>
                 <option value="9">Class 9</option>
                 <option value="10">Class 10</option>
                 <option value="11">Class 11</option>
                 <option value="12">Class 12</option>
+                <option value="9-12">Class 9-12</option>
             </select>
             <select id="subjectF" onchange="runFilter()">
                 <option value="">All Subjects</option>
                 <option value="Math">Math</option>
                 <option value="Science">Science</option>
                 <option value="Physics">Physics</option>
-                <option value="Chemistry">Chemistry</option>
-                <option value="Biology">Biology</option>
                 <option value="English">English</option>
             </select>
             <input type="text" id="chapterF" placeholder="Chapter Filter..." oninput="runFilter()">
-            <button onclick="runFilter()">Apply</button>
+            <button onclick="runFilter()">Apply Filter</button>
         </div>
+
         <div class="container" id="notesList"></div>
+
+        <article style="margin-top: 50px; text-align: left; padding: 20px; color: #444; border-top: 1px solid #ddd;">
+            <h2>Download High-Quality Study Material</h2>
+            <p>ChartLeap provides <strong>Class 12 Physics Notes</strong> and <strong>Class 10 Science Notes</strong> designed for fast revision. Whether you are looking for <em>English Application Writing</em> or 3D Physics derivations, we have it all in PDF format.</p>
+        </article>
     </main>
-    <footer>
-        
-    </footer>
-    <!-- Floating Feedback Button -->
-    <div class="feedback-float" id="feedback-float">
-        Feedback
-    </div>
-    <!-- Feedback Popup Modal -->
-    <div class="feedback-modal" id="feedback-modal">
-        <div class="modal-content">
-            <span class="close-btn" id="close-modal">×</span>
-            <h2>chartleap को रेटिंग दें</h2>
-            <div class="star-rating">
-                <span class="star" data-value="1">★</span>
-                <span class="star" data-value="2">★</span>
-                <span class="star" data-value="3">★</span>
-                <span class="star" data-value="4">★</span>
-                <span class="star" data-value="5">★</span>
-            </div>
-            <input type="text" id="feedback-name" placeholder="आपका नाम (वैकल्पिक)">
-            <textarea id="feedback-message" rows="4" placeholder="कोई सुझाव या तारीफ? 😊"></textarea>
-            <button id="submit-feedback">Submit Feedback</button>
-            <p id="feedback-status"></p>
-        </div>
-    </div>
+
     <script>
-        // ───────────────────────────────
-        //     SIRF YEH ARRAY BADLO
-        // ───────────────────────────────
         const allNotes = [
             {
-                class: 9-12,
+                class: "12",
                 subject: "English",
-                chapter: "Application to the Principal (Fee Concession - Fees Maafi ke liye)",
-                shortDesc: "",
-                pdf: "Application to the Principal (Fee Concession - Fees Maafi ke liye).pdf "
-            
+                chapter: "Application to the Principal (Fee Concession)",
+                shortDesc: "Official application format for school students. Essential for board exams.",
+                pdf: "Application to the Principal (Fee Concession - Fees Maafi ke liye).pdf"
             },
             {
-            class: 9-12,
+                class: "12",
                 subject: "English",
-                chapter: "Letter to Father (Exam Preparation - Taiyari batane ke liye)",
-                shortDesc: "",
-                pdf: "Letter to Father (Exam Preparation - Taiyari batane ke liye).pdf "
+                chapter: "Letter to Father regarding Exam Preparation",
+                shortDesc: "Informal letter format explaining your study progress to parents.",
+                pdf: "Letter to Father (Exam Preparation - Taiyari batane ke liye).pdf"
             },
             {
-            class: 9-12,
+                class: "12",
                 subject: "English",
-                chapter: "Letter to Friend (Inviting for Birthday - Janmdin par bulane ke liye)",
-                shortDesc: "",
-                pdf: "Letter to Friend (Inviting for Birthday - Janmdin par bulane ke liye) .pdf "
+                chapter: "Letter to Friend for Birthday Invitation",
+                shortDesc: "Format for inviting friends to personal celebrations.",
+                pdf: "Letter to Friend (Inviting for Birthday - Janmdin par bulane ke liye) .pdf"
             },
-            
             {
-            class: 9-12,
+                class: "12",
                 subject: "English",
-                chapter: "Letter to the Editor (Frequent Power Cut - Bijli ki samasya)",
-                shortDesc: "",
-                pdf: "Letter to the Editor (Frequent Power Cut - Bijli ki samasya).pdf "
-            },
-            
-            
-            // {
-            //     class: 10,
-            //     subject: "Science",
-            //     chapter: "Chemical Reactions & Equations",
-            //     shortDesc: "Types of reactions, balancing, corrosion, rancidity...",
-            //     pdf: "notes/class10-science-chemical-reactions.pdf"
-            //  },
-            
-
-          
-            
-            // Naye notes yahan add karo – same format
+                chapter: "Letter to Editor: Frequent Power Cuts",
+                shortDesc: "Formal letter format addressing community problems.",
+                pdf: "Letter to the Editor (Frequent Power Cut - Bijli ki samasya).pdf"
+            }
         ];
 
-        // ───────────────────────────────
-        //     Niche code mat change karna
-        // ───────────────────────────────
-
         function showNotes(notesToShow) {
-            document.getElementById('notesList').innerHTML = notesToShow.map(note => `
+            const list = document.getElementById('notesList');
+            list.innerHTML = notesToShow.map(note => `
                 <div class="card">
                     <h3>${note.chapter}<br><small>${note.subject} • Class ${note.class}</small></h3>
                     <p>${note.shortDesc}</p>
                     <div class="btn-group">
-                        <button class="btn btn-view" onclick="openPDF('${note.pdf}', '${note.chapter} • ${note.subject}')">View PDF</button>
-                        <a href="${note.pdf}" download class="btn btn-download">Download PDF</a>
+                        <button class="btn btn-view" onclick="window.open('${note.pdf}')">View PDF</button>
+                        <a href="${note.pdf}" download class="btn btn-download">Download</a>
                     </div>
                 </div>
             `).join('');
         }
 
-        function openPDF(pdfPath, title) {
-            const modal = document.createElement('div');
-            modal.className = 'modal';
-            modal.innerHTML = `
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <div>${title}</div>
-                        <button class="close" onclick="this.closest('.modal').remove()">×</button>
-                    </div>
-                    <iframe src="${pdfPath}"></iframe>
-                </div>
-            `;
-            document.body.appendChild(modal);
-            modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
-        }
-
         function runFilter() {
             const search = document.getElementById('search').value.toLowerCase().trim();
-            const cls    = document.getElementById('classF').value;
-            const sub    = document.getElementById('subjectF').value.toLowerCase().trim();
-            const chp    = document.getElementById('chapterF').value.toLowerCase().trim();
+            const cls = document.getElementById('classF').value;
+            const sub = document.getElementById('subjectF').value.toLowerCase();
+            const chp = document.getElementById('chapterF').value.toLowerCase();
 
             let result = allNotes.filter(n => {
-                return (!cls  || n.class == cls) &&
-                       (!sub  || n.subject.toLowerCase().includes(sub)) &&
-                       (!chp  || n.chapter.toLowerCase().includes(chp));
+                const matchCls = !cls || n.class.toString().includes(cls);
+                const matchSub = !sub || n.subject.toLowerCase().includes(sub);
+                const matchChp = !chp || n.chapter.toLowerCase().includes(chp);
+                return matchCls && matchSub && matchChp;
             });
 
             if (search) {
-                result.sort((a,b) => a.chapter.toLowerCase().includes(search) ? -1 : 1);
+                result = result.filter(n => n.chapter.toLowerCase().includes(search) || n.subject.toLowerCase().includes(search));
             }
-
             showNotes(result);
         }
 
-        runFilter(); // Initial load
+        runFilter();
     </script>
+
+    <footer>
+        <div style="max-width: 1200px; margin: auto; padding: 20px;">
+            <h3>ChartLeap</h3>
+            <hr style="border: 0; border-top: 1px solid #444; margin: 20px 0;">
+            <div style="margin-bottom: 20px;">
+                <a href="/about-us" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 14px;">About Us</a>
+                <a href="/privacy-policy" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 14px;">Privacy Policy</a>
+                <a href="/terms-and-conditions" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 14px;">Terms & Conditions</a>
+                <a href="/contact-us" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 14px;">Contact Us</a>
+                <a href="/Disclaimer.html" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 14px;">Disclaimer</a>
+            </div>
+            <p style="font-size: 13px; color: #888;">&copy; 2026 ChartLeap (chartleap.online). All Rights Reserved.</p>
+        </div>
+    </footer>
     <script src="script.js"></script>
 </body>
-<footer>
- <div style="max-width: 1200px; margin: auto; padding: 0 20px;">
-        
-        <h3 style="margin-bottom: 15px;">ChartLeap</h3>
-        
-        <hr style="border: 0; border-top: 1px solid #444; margin: 20px 0;">
-        
-        <div style="margin-bottom: 20px;">
-            <a href="/about-us" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 14px;">About Us</a>
-            <a href="/privacy-policy" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 14px;">Privacy Policy</a>
-            <a href="/terms-and-conditions" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 14px;">Terms & Conditions</a>
-            <a href="/contact-us" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 14px;">Contact Us</a>
-            <a href="/Disclaimer.html" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 14px;">disclaimer</a>
-
-        </div>
-        
-        <p style="font-size: 13px; color: #888; margin: 0;">
-            &copy; 2026 ChartLeap (chartleap.online).
-        </p>
-        
-      </div>
-</footer> 
-
 </html>
-
-

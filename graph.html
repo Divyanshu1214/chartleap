@@ -3,26 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5171198736201288"
-     crossorigin="anonymous"></script>
-    <title>Universal Graph Plotter - Plot Equations Instantly Online | chartleap</title>
-    <meta name="description" content="Kisi bhi math equation (y=x², circle, polar, parametric) ko instantly plot karein hamare fast aur interactive graph plotter ke saath.">
-    <meta name="keywords" content="online graph plotter, plot math equations, parametric grapher, universal function plotter chartleap">
+    
+    <title>Free Online Graph Plotter | Plot Math Equations Instantly - ChartLeap</title>
+    <meta name="description" content="Use ChartLeap's Universal Graph Plotter to plot y=x², circles, polar, and parametric equations instantly. The best free online math tool for students and teachers.">
+    <meta name="keywords" content="online graph plotter, math function grapher, plot equations online, parametric equation solver, chartleap graph tool, free math graphing software">
     <link rel="canonical" href="https://www.chartleap.online/graph.html" />
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.chartleap.online/graph.html">
+    <meta property="og:title" content="Free Online Graph Plotter | ChartLeap">
+    <meta property="og:description" content="Plot any math equation (y=x², circle, polar, parametric) instantly with our interactive tool.">
+    <meta property="og:image" content="logo.png">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "ChartLeap Graph Plotter",
+      "operatingSystem": "All",
+      "applicationCategory": "EducationalApplication",
+      "description": "An interactive online tool to plot mathematical functions and equations including cartesian, polar, and parametric forms.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5171198736201288" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="royal.css">
     <link rel="icon" type="image/jpeg" href="logo.png">
     <link rel="apple-touch-icon" href="logo.png">
-    <link rel="canonical" href="https://www.chartleap.online/graph.html" />
 
     <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/13.2.0/math.js"></script>
 </head>
 <body>
     <script>(function(s){s.dataset.zone='10494579',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+    
     <header>
         <div class="logo">
-            <img src="logo.png" alt="chartleap Logo">
+            <img src="logo.png" alt="ChartLeap - Online Educational Graphing Tools">
             <span>chartleap</span>
         </div>
         <nav>
@@ -33,40 +56,45 @@
             <a href="test.html"><button class="nav-btn">📋 Test</button></a>
         </nav>
     </header>
+
     <main>
-        <h1>Universal Graph Plotter</h1>
-        <p>Enter equations: y=x², x²+y²=25, r=cos(3θ), x=cos(t);y=sin(t)</p>
+        <h1>Free Universal Graph Plotter & Function Grapher</h1>
+        <p>Visualize complex mathematical functions instantly. Enter equations like <strong>y=x²</strong>, <strong>x²+y²=25</strong>, or <strong>r=cos(3θ)</strong> to see them in action.</p>
         
-        <div id="equation-inputs">
-            <input type="text" class="equation" placeholder="y = x^2">
-            <input type="text" class="equation" placeholder="x^2 + y^2 = 25">
-            <input type="text" class="equation" placeholder="r = 2*sin(3*theta)">
+        <div id="equation-inputs" aria-label="Equation Input Section">
+            <input type="text" class="equation" placeholder="y = x^2" aria-label="Enter Cartesian equation">
+            <input type="text" class="equation" placeholder="x^2 + y^2 = 25" aria-label="Enter Implicit equation">
+            <input type="text" class="equation" placeholder="r = 2*sin(3*theta)" aria-label="Enter Polar equation">
         </div>
         
-        <button id="add-equation">+ Add Equation</button>
-        <button id="plot-graph">Plot Graph</button>
-        <button id="clear-graph">Clear</button>
+        <div class="controls" style="margin-top: 15px;">
+            <button id="add-equation">+ Add Equation</button>
+            <button id="plot-graph" style="background-color: #2ecc71; color: white;">Plot Graph</button>
+            <button id="clear-graph">Clear</button>
+        </div>
         
-        <div id="graph" class="animate-fade-in"></div>
-        <p id="error-message" style="color: red; min-height: 24px;"></p>
+        <div id="graph" class="animate-fade-in" style="margin-top: 20px;"></div>
+        <p id="error-message" style="color: red; min-height: 24px; font-weight: 500;"></p>
+
+        <section class="seo-info" style="margin-top: 40px; text-align: left; padding: 20px; background: #261818; border-radius: 8px;">
+            <h2>Powerful Online Math Graphing Tool</h2>
+            <p>Our grapher supports various mathematical representations to help students understand geometry and calculus better:</p>
+            <ul style="line-height: 1.8;">
+                <li><strong>Cartesian Equations:</strong> Standard functions like y = sin(x) or y = x^3.</li>
+                <li><strong>Circle & Implicit Forms:</strong> Plot shapes using equations like x^2 + y^2 = 16.</li>
+                <li><strong>Polar Coordinates:</strong> Create beautiful patterns using r = a*cos(n*theta).</li>
+                <li><strong>Parametric Equations:</strong> Define x and y in terms of 't' (e.g., x=cos(t); y=sin(t)).</li>
+            </ul>
+        </section>
     </main>
-    <footer>
-    </footer>
-    <!-- Floating Feedback Button -->
-    <div class="feedback-float" id="feedback-float">
-        Feedback
-    </div>
-    <!-- Feedback Popup Modal -->
+
+    <div class="feedback-float" id="feedback-float">Feedback</div>
     <div class="feedback-modal" id="feedback-modal">
         <div class="modal-content">
             <span class="close-btn" id="close-modal">×</span>
             <h2>chartleap को रेटिंग दें</h2>
             <div class="star-rating">
-                <span class="star" data-value="1">★</span>
-                <span class="star" data-value="2">★</span>
-                <span class="star" data-value="3">★</span>
-                <span class="star" data-value="4">★</span>
-                <span class="star" data-value="5">★</span>
+                <span class="star" data-value="1">★</span><span class="star" data-value="2">★</span><span class="star" data-value="3">★</span><span class="star" data-value="4">★</span><span class="star" data-value="5">★</span>
             </div>
             <input type="text" id="feedback-name" placeholder="आपका नाम (वैकल्पिक)">
             <textarea id="feedback-message" rows="4" placeholder="कोई सुझाव या तारीफ? 😊"></textarea>
@@ -74,31 +102,22 @@
             <p id="feedback-status"></p>
         </div>
     </div>
+
+    <footer>
+        <div style="max-width: 1200px; margin: auto; padding: 20px;">
+            <h3 style="margin-bottom: 15px;">ChartLeap</h3>
+            <hr style="border: 0; border-top: 1px solid #444; margin: 20px 0;">
+            <div class="footer-links" style="margin-bottom: 20px;">
+                <a href="/about-us" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 14px;">About Us</a>
+                <a href="/privacy-policy" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 14px;">Privacy Policy</a>
+                <a href="/terms-and-conditions" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 14px;">Terms & Conditions</a>
+                <a href="/contact-us" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 14px;">Contact Us</a>
+                <a href="/Disclaimer.html" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 14px;">Disclaimer</a>
+            </div>
+            <p style="font-size: 13px; color: #888; margin: 0;">&copy; 2026 ChartLeap (chartleap.online). All Rights Reserved.</p>
+        </div>
+    </footer>
+
     <script src="script.js"></script>
 </body>
-<footer>
-    <div style="max-width: 1200px; margin: auto; padding: 0 20px;">
-        
-        <h3 style="margin-bottom: 15px;">ChartLeap</h3>
-        
-        <hr style="border: 0; border-top: 1px solid #444; margin: 20px 0;">
-        
-        <div style="margin-bottom: 20px;">
-            <a href="/about-us" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 14px;">About Us</a>
-            <a href="/privacy-policy" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 14px;">Privacy Policy</a>
-            <a href="/terms-and-conditions" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 14px;">Terms & Conditions</a>
-            <a href="/contact-us" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 14px;">Contact Us</a>
-            <a href="/Disclaimer.html" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 14px;">disclaimer</a>
-
-        </div>
-        
-        <p style="font-size: 13px; color: #888; margin: 0;">
-            &copy; 2026 ChartLeap (chartleap.online).
-        </p>
-        
-      </div>
-</footer>
-
 </html>
-
-
