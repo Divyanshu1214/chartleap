@@ -1,123 +1,229 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal Graph Plotter | ChartLeap Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Orbitron:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     
-    <title>Free Online Graph Plotter | Plot Math Equations Instantly - ChartLeap</title>
-    <meta name="description" content="Use ChartLeap's Universal Graph Plotter to plot y=x², circles, polar, and parametric equations instantly. The best free online math tool for students and teachers.">
-    <meta name="keywords" content="online graph plotter, math function grapher, plot equations online, parametric equation solver, chartleap graph tool, free math graphing software">
-    <link rel="canonical" href="https://www.chartleap.online/graph.html" />
-
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://www.chartleap.online/graph.html">
-    <meta property="og:title" content="Free Online Graph Plotter | ChartLeap">
-    <meta property="og:description" content="Plot any math equation (y=x², circle, polar, parametric) instantly with our interactive tool.">
-    <meta property="og:image" content="logo.png">
-
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      "name": "ChartLeap Graph Plotter",
-      "operatingSystem": "All",
-      "applicationCategory": "EducationalApplication",
-      "description": "An interactive online tool to plot mathematical functions and equations including cartesian, polar, and parametric forms.",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-      }
-    }
-    </script>
-
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5171198736201288" crossorigin="anonymous"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="royal.css">
-    <link rel="icon" type="image/jpeg" href="logo.png">
-    <link rel="apple-touch-icon" href="logo.png">
-
     <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/13.2.0/math.js"></script>
+
+    <style>
+        :root {
+            --neon: #00f2fe;
+            --bg: #000205;
+            --panel: rgba(0, 15, 30, 0.7);
+            --border: rgba(0, 242, 254, 0.3);
+        }
+
+        body {
+            margin: 0; background: var(--bg); color: #e0e0e0;
+            font-family: 'Montserrat', sans-serif; overflow-x: hidden;
+        }
+
+        /* Background Effects */
+        .background-layer {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: linear-gradient(rgba(0, 242, 254, 0.05) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(0, 242, 254, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px; perspective: 1000px; transform: rotateX(20deg); transform-origin: top;
+        }
+        #star-canvas { position: fixed; top: 0; left: 0; z-index: -2; }
+
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 50px; height: 80px; background: rgba(0, 5, 10, 0.9);
+            backdrop-filter: blur(20px); border-bottom: 2px solid var(--border);
+        }
+
+        .logo h1 { font-family: 'Cinzel', serif; color: var(--neon); letter-spacing: 5px; margin: 0; text-shadow: 0 0 15px var(--neon); }
+
+        nav a {
+            text-decoration: none; color: #fff; font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem; letter-spacing: 2px; padding: 10px 15px; transition: 0.3s;
+        }
+        nav a:hover { color: var(--neon); text-shadow: 0 0 10px var(--neon); }
+
+        main {
+            max-width: 1000px; margin: 40px auto; padding: 35px;
+            background: var(--panel); border: 1px solid var(--border);
+            position: relative; box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+        }
+
+        h2 { font-family: 'Orbitron', sans-serif; color: #fff; border-left: 4px solid var(--neon); padding-left: 15px; }
+
+        /* Input Styling */
+        #equation-inputs { display: grid; gap: 15px; margin-bottom: 25px; }
+        .equation {
+            width: 100%; background: rgba(0, 5, 15, 0.9); border: 1px solid var(--border);
+            padding: 15px; color: #fff; font-family: 'Orbitron', sans-serif;
+            font-size: 1rem; outline: none; box-sizing: border-box;
+        }
+        .equation:focus { border-color: var(--neon); box-shadow: 0 0 15px rgba(0, 242, 254, 0.3); }
+
+        /* Buttons */
+        .btn-group { display: flex; gap: 10px; margin-bottom: 30px; }
+        .btn {
+            padding: 15px 25px; font-family: 'Orbitron', sans-serif; font-weight: bold;
+            cursor: pointer; border: none; transition: 0.3s; flex: 1;
+        }
+        #plot-graph { background: var(--neon); color: #000; }
+        #add-equation { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid var(--border); }
+        #clear-graph { background: rgba(255,0,0,0.1); color: #ff4444; border: 1px solid #ff4444; }
+        .btn:hover { filter: brightness(1.2); transform: translateY(-2px); }
+
+        #graph { width: 100%; height: 500px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); }
+        #error-message { color: #ff5555; font-family: 'Orbitron', sans-serif; font-size: 0.8rem; margin-top: 10px; }
+    </style>
 </head>
 <body>
-    <script>(function(s){s.dataset.zone='10494579',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
-    
+
+    <canvas id="star-canvas"></canvas>
+    <div class="background-layer"></div>
+
     <header>
-        <div class="logo">
-            <img src="logo.png" alt="ChartLeap - Online Educational Graphing Tools">
-            <span>chartleap</span>
-        </div>
+        <div class="logo"><h1>CHARTLEAP</h1></div>
         <nav>
-            <a href="index.html"><button class="nav-btn">🏠 Home</button></a>
-            <a href="graph.html"><button class="nav-btn">📈 Graph Plotter</button></a>
-            <a href="simulations.html"><button class="nav-btn">🔬 Simulations</button></a>
-            <a href="notes.html"><button class="nav-btn">📝 Notes</button></a>
-            <a href="test.html"><button class="nav-btn">📋 Test</button></a>
+            <a href="index.html">HOME</a>
+            <a href="graph.html">PLOTTER</a>
+            <a href="simulations.html">LAB</a>
         </nav>
     </header>
 
     <main>
-        <h1>Free Universal Graph Plotter & Function Grapher</h1>
-        <p>Visualize complex mathematical functions instantly. Enter equations like <strong>y=x²</strong>, <strong>x²+y²=25</strong>, or <strong>r=cos(3θ)</strong> to see them in action.</p>
+        <h2>UNIVERSE_PLOTTER.exe</h2>
+        <p style="color: var(--neon); font-size: 0.8rem; letter-spacing: 2px;">Enter: y=x^2, x^2+y^2=25, or x=cos(t);y=sin(t)</p>
         
-        <div id="equation-inputs" aria-label="Equation Input Section">
-            <input type="text" class="equation" placeholder="y = x^2" aria-label="Enter Cartesian equation">
-            <input type="text" class="equation" placeholder="x^2 + y^2 = 25" aria-label="Enter Implicit equation">
-            <input type="text" class="equation" placeholder="r = 2*sin(3*theta)" aria-label="Enter Polar equation">
+        <div id="equation-inputs">
+            <input type="text" class="equation" placeholder="y = x^2" value="y = x^2">
         </div>
         
-        <div class="controls" style="margin-top: 15px;">
-            <button id="add-equation">+ Add Equation</button>
-            <button id="plot-graph" style="background-color: #2ecc71; color: white;">Plot Graph</button>
-            <button id="clear-graph">Clear</button>
+        <div class="btn-group">
+            <button class="btn" id="add-equation">+ ADD_EQUATION</button>
+            <button class="btn" id="plot-graph">INITIATE_PLOT</button>
+            <button class="btn" id="clear-graph">CLEAR_DATA</button>
         </div>
         
-        <div id="graph" class="animate-fade-in" style="margin-top: 20px;"></div>
-        <p id="error-message" style="color: red; min-height: 24px; font-weight: 500;"></p>
-
-        <section class="seo-info" style="margin-top: 40px; text-align: left; padding: 20px; background: #261818; border-radius: 8px;">
-            <h2>Powerful Online Math Graphing Tool</h2>
-            <p>Our grapher supports various mathematical representations to help students understand geometry and calculus better:</p>
-            <ul style="line-height: 1.8;">
-                <li><strong>Cartesian Equations:</strong> Standard functions like y = sin(x) or y = x^3.</li>
-                <li><strong>Circle & Implicit Forms:</strong> Plot shapes using equations like x^2 + y^2 = 16.</li>
-                <li><strong>Polar Coordinates:</strong> Create beautiful patterns using r = a*cos(n*theta).</li>
-                <li><strong>Parametric Equations:</strong> Define x and y in terms of 't' (e.g., x=cos(t); y=sin(t)).</li>
-            </ul>
-        </section>
+        <div id="graph"></div>
+        <p id="error-message"></p>
     </main>
 
-    <div class="feedback-float" id="feedback-float">Feedback</div>
-    <div class="feedback-modal" id="feedback-modal">
-        <div class="modal-content">
-            <span class="close-btn" id="close-modal">×</span>
-            <h2>chartleap को रेटिंग दें</h2>
-            <div class="star-rating">
-                <span class="star" data-value="1">★</span><span class="star" data-value="2">★</span><span class="star" data-value="3">★</span><span class="star" data-value="4">★</span><span class="star" data-value="5">★</span>
-            </div>
-            <input type="text" id="feedback-name" placeholder="आपका नाम (वैकल्पिक)">
-            <textarea id="feedback-message" rows="4" placeholder="कोई सुझाव या तारीफ? 😊"></textarea>
-            <button id="submit-feedback">Submit Feedback</button>
-            <p id="feedback-status"></p>
-        </div>
-    </div>
+    <script>
+        // --- UI & Background Logic ---
+        const canvas = document.getElementById('star-canvas');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
 
-    <footer>
-        <div style="max-width: 1200px; margin: auto; padding: 20px;">
-            <h3 style="margin-bottom: 15px;">ChartLeap</h3>
-            <hr style="border: 0; border-top: 1px solid #444; margin: 20px 0;">
-            <div class="footer-links" style="margin-bottom: 20px;">
-                <a href="/about-us" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 14px;">About Us</a>
-                <a href="/privacy-policy" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 14px;">Privacy Policy</a>
-                <a href="/terms-and-conditions" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 14px;">Terms & Conditions</a>
-                <a href="/contact-us" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 14px;">Contact Us</a>
-                <a href="/Disclaimer.html" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 14px;">Disclaimer</a>
-            </div>
-            <p style="font-size: 13px; color: #888; margin: 0;">&copy; 2026 ChartLeap (chartleap.online). All Rights Reserved.</p>
-        </div>
-    </footer>
+        function initStars() {
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            stars = [];
+            for(let i=0; i<200; i++) stars.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, z: Math.random()*canvas.width});
+        }
+        function drawStars() {
+            ctx.fillStyle = "black"; ctx.fillRect(0,0,canvas.width, canvas.height);
+            ctx.fillStyle = "#00f2fe";
+            stars.forEach(s => {
+                let x = (s.x - canvas.width/2) * (canvas.width/s.z) + canvas.width/2;
+                let y = (s.y - canvas.height/2) * (canvas.width/s.z) + canvas.height/2;
+                let sz = (1 - s.z/canvas.width) * 3;
+                ctx.beginPath(); ctx.arc(x, y, sz, 0, Math.PI*2); ctx.fill();
+                s.z -= 2; if(s.z <= 0) s.z = canvas.width;
+            });
+            requestAnimationFrame(drawStars);
+        }
+        initStars(); drawStars();
 
-    <script src="script.js"></script>
+        // --- Core Plotting Logic (from script.js) ---
+        const addEquationBtn = document.getElementById('add-equation');
+        const plotGraphBtn = document.getElementById('plot-graph');
+        const equationInputs = document.getElementById('equation-inputs');
+        const errorMessage = document.getElementById('error-message');
+
+        addEquationBtn.addEventListener('click', () => {
+            const newInput = document.createElement('input');
+            newInput.type = 'text';
+            newInput.className = 'equation';
+            newInput.placeholder = 'Try: x^2 + y^2 = 25...';
+            equationInputs.appendChild(newInput);
+        });
+
+        document.getElementById('clear-graph').onclick = () => {
+            equationInputs.innerHTML = '<input type="text" class="equation" value="y = x^2">';
+            Plotly.newPlot('graph', [], layout);
+        };
+
+        const layout = {
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,10,20,0.5)',
+            font: { color: '#00f2fe', family: 'Orbitron' },
+            xaxis: { gridcolor: '#002233', zerolinecolor: '#00f2fe', autorange: true },
+            yaxis: { gridcolor: '#002233', zerolinecolor: '#00f2fe', autorange: true, scaleanchor: "x" },
+            margin: { t: 30, b: 40, l: 40, r: 20 }
+        };
+
+        plotGraphBtn.addEventListener('click', () => {
+            errorMessage.textContent = '';
+            const equations = Array.from(document.querySelectorAll('.equation'))
+                .map(input => input.value.trim())
+                .filter(eq => eq !== '');
+
+            const traces = [];
+            const xValuesSimple = Array.from({ length: 501 }, (_, i) => (i - 250) / 10);
+
+            equations.forEach((eq, index) => {
+                try {
+                    const color = ['#00f2fe', '#ff00ff', '#00ff00', '#ffff00'][index % 4];
+                    
+                    // 1. Parametric
+                    if (eq.includes(';')) {
+                        let parts = eq.split(';');
+                        let xExpr = parts[0].split('=')[1] || parts[0];
+                        let yExpr = parts[1].split('=')[1] || parts[1];
+                        let tValues = Array.from({ length: 200 }, (_, i) => (i - 100) / 10);
+                        if(eq.match(/sin|cos/i)) tValues = Array.from({ length: 360 }, (_, i) => i * Math.PI / 180);
+                        
+                        let xNode = math.parse(xExpr).compile();
+                        let yNode = math.parse(yExpr).compile();
+                        traces.push({
+                            x: tValues.map(t => xNode.evaluate({ t })),
+                            y: tValues.map(t => yNode.evaluate({ t })),
+                            name: eq, line: { color: color }
+                        });
+                    } 
+                    // 2. Cartesian Explicit (y = ...)
+                    else if (eq.toLowerCase().includes('y') && !eq.includes('^2')) {
+                        let expr = eq.split('=')[1] || eq;
+                        let compiled = math.parse(expr).compile();
+                        traces.push({
+                            x: xValuesSimple,
+                            y: xValuesSimple.map(x => { try { return compiled.evaluate({x}); } catch { return null; } }),
+                            name: eq, line: { color: color }
+                        });
+                    }
+                    // 3. Implicit (x^2 + y^2 = 25)
+                    else {
+                        let implicitExpr = eq.includes('=') ? `(${eq.split('=')[0]}) - (${eq.split('=')[1]})` : eq;
+                        const compiled = math.parse(implicitExpr).compile();
+                        const xRange = Array.from({length: 60}, (_, i) => i - 30);
+                        const zValues = xRange.map(y => xRange.map(x => compiled.evaluate({x, y})));
+                        
+                        traces.push({
+                            type: 'contour', x: xRange, y: xRange, z: zValues,
+                            contours: { coloring: 'none', start: 0, end: 0, size: 0 },
+                            line: { color: color, width: 2 }, showscale: false, name: eq
+                        });
+                    }
+                } catch (e) {
+                    errorMessage.textContent += `Error in "${eq}": ${e.message} | `;
+                }
+            });
+
+            Plotly.newPlot('graph', traces, layout);
+        });
+
+        // Initial Plot
+        plotGraphBtn.click();
+    </script>
 </body>
 </html>
