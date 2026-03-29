@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChartLeap - Ultimate 3D Void</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
+    
     <style>
         body { margin: 0; background: #000; overflow: hidden; font-family: 'Montserrat', sans-serif; color: white; }
         
@@ -64,6 +65,16 @@
                         linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
             background-size: 100% 4px, 3px 100%; pointer-events: none; z-index: 99;
         }
+        .logo{
+            display: flex;
+            align-items: center;
+            font-family: 'Cinzel', serif;
+            font-size: 2.3rem;
+            color: #d4af37;
+            text-shadow: 0 3px 12px rgba(212,175,55,0.5);
+
+        }
+        .logo img { width: 60px; height: 60px; margin-right: 12px; border-radius: 50%; }
     </style>
 </head>
 <body>
@@ -71,7 +82,10 @@
     <div id="three-container"></div>
 
     <header>
-        <div class="logo"><h1>CHARTLEAP</h1></div>
+        <div class="logo"> 
+            <img src="logo.png" alt="chartleap logo ">
+            <h1>CHARTLEAP</h1> 
+        </div>
         <nav>
             <ul>
                 <li><a href="index.html">HOME</a></li>
@@ -84,7 +98,7 @@
 
     <section class="hero">
         <h2>CHARTLEAP</h2>
-        <p>Deep 3D Learning Void</p>
+        <p>Deep Learning Void</p>
     </section>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
