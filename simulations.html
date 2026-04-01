@@ -1,72 +1,90 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5171198736201288" crossorigin="anonymous"></script>
     
-    <title>Interactive Physics Simulations & Virtual Lab - ChartLeap</title>
-    <meta name="description" content="Explore free 3D physics simulations for Class 10-12. Physics experiments like Ohm's Law, Gauss Law, and Mirror formation in Hindi & English for free online.">
-    <meta name="keywords" content="interactive physics simulations, virtual lab online, 3d physics experiments, science simulations hindi, ChartLeap physics lab, Ohm's law simulation, Gauss law 3D">
+    <title>Interactive Physics Simulations - Virtual Science Lab | ChartLeap</title>
+    <meta name="description" content="Physics के कठिन सिद्धांतों (Mirror, Ohm's Law, Gauss Law) को 3D simulations के साथ आसानी से समझें। Class 10-12 के लिए बेहतरीन वर्चुअल लैब।">
+    <meta name="keywords" content="physics simulations hindi, virtual science lab, 3d physics experiments, chartleap simulations, interactive physics lab class 12">
+    <meta name="author" content="ChartLeap">
     <link rel="canonical" href="https://www.chartleap.online/simulations.html" />
 
-    <meta property="og:title" content="Interactive Physics Simulations - ChartLeap Virtual Lab">
-    <meta property="og:description" content="Physics ke complex concepts ko 3D simulations ke saath asani se samjhein. Mirror, Ohm's Law, aur Gauss Law sab ek hi jagah.">
-    <meta property="og:image" content="logo.png">
+    <meta property="og:type" content="website">
     <meta property="og:url" content="https://www.chartleap.online/simulations.html">
+    <meta property="og:title" content="ChartLeap - Interactive Virtual Physics Lab">
+    <meta property="og:description" content="Physics के complex concepts को 3D simulations के साथ लाइव देखें और सीखें।">
+    <meta property="og:image" content="logo.png">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="ChartLeap Physics Simulations">
+    <meta name="twitter:description" content="Learn Physics through 3D interactive experiments.">
 
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "ItemList",
-      "name": "Physics Simulations List",
-      "description": "A collection of interactive 3D physics simulations for Class 9-12 students.",
-      "itemListElement": [
-        { "@type": "ListItem", "position": 1, "name": "Spherical Mirror Image Formation" },
-        { "@type": "ListItem", "position": 2, "name": "Electric Dipole 3D Simulation" },
-        { "@type": "ListItem", "position": 3, "name": "Gauss's Law 3D Simulation" },
-        { "@type": "ListItem", "position": 4, "name": "Ohm's Law Experiment" }
-      ]
+      "@type": "EducationalOccupationalCredential",
+      "name": "Physics Virtual Lab Simulations",
+      "educationalLevel": "Class 10, 11, 12",
+      "provider": {
+        "@type": "Organization",
+        "name": "ChartLeap",
+        "url": "https://www.chartleap.online"
+      },
+      "description": "Interactive simulations for Physics topics like Ohm's Law, Gauss Law, and Optics."
     }
     </script>
 
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="royal.css">
-    <link rel="icon" type="image/jpeg" href="logo.png">
-    <link rel="apple-touch-icon" href="logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Orbitron:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* [पिछला CSS कोड यहाँ रहेगा] */
+        :root { --neon: #00f2fe; --bg: #000205; --panel: rgba(0, 15, 30, 0.7); --border: rgba(0, 242, 254, 0.3); --card-bg: rgba(0, 5, 15, 0.9); }
+        body { margin: 0; background: var(--bg); color: #e0e0e0; font-family: 'Montserrat', sans-serif; overflow-x: hidden; }
+        #star-canvas { position: fixed; top: 0; left: 0; z-index: -2; }
+        .grid-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: linear-gradient(rgba(0, 242, 254, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 242, 254, 0.05) 1px, transparent 1px); background-size: 50px 50px; }
+        header { display: flex; justify-content: space-between; align-items: center; padding: 0 50px; height: 80px; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(15px); border-bottom: 2px solid var(--border); position: sticky; top: 0; z-index: 1000; }
+        .logo h1 { font-family: 'Cinzel', serif; color: var(--neon); margin: 0; letter-spacing: 4px; text-shadow: 0 0 15px var(--neon); }
+        nav a { text-decoration: none; color: #fff; font-family: 'Orbitron', sans-serif; font-size: 0.75rem; margin-left: 20px; letter-spacing: 1px; transition: 0.3s; }
+        nav a:hover { color: var(--neon); text-shadow: 0 0 10px var(--neon); }
+        main { max-width: 1200px; margin: 40px auto; padding: 20px; }
+        h1 { font-family: 'Orbitron', sans-serif; text-align: center; color: #fff; letter-spacing: 5px; font-size: 2.5rem; margin-bottom: 10px; }
+        .subtitle { text-align: center; color: var(--neon); font-size: 0.8rem; margin-bottom: 40px; text-transform: uppercase; letter-spacing: 4px; }
+        #search-bar { width: 100%; background: var(--panel); border: 1px solid var(--border); padding: 20px; color: #fff; font-family: 'Orbitron', sans-serif; font-size: 1rem; margin-bottom: 50px; outline: none; border-radius: 4px; box-sizing: border-box; }
+        #simulation-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; }
+        .simulation-item { background: var(--card-bg); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; padding: 15px; transition: 0.4s; overflow: hidden; }
+        .simulation-item:hover { border-color: var(--neon); transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0, 242, 254, 0.15); }
+        .simulation-item h2 { font-family: 'Orbitron', sans-serif; font-size: 1rem; margin-top: 15px; color: #fff; line-height: 1.4; }
+        .simulation-item small { color: var(--neon); font-size: 0.75rem; text-transform: uppercase; opacity: 0.8; }
+        .simulation-link img { width: 100%; height: 200px; object-fit: cover; border-radius: 2px; border: 1px solid rgba(255,255,255,0.05); }
+        footer { margin-top: 60px; padding: 40px 0; border-top: 1px solid var(--border); text-align: center; }
+        footer a { color: #888; text-decoration: none; margin: 0 15px; font-size: 0.9rem; }
+    </style>
 </head>
 <body>
-    <script>(function(s){s.dataset.zone='10494579',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
-    
+
+    <canvas id="star-canvas"></canvas>
+    <div class="grid-overlay"></div>
+
     <header>
-        <div class="logo">
-            <img src="logo.png" alt="ChartLeap - Interactive Learning Logo">
-            <span>chartleap</span>
-        </div>
+        <div class="logo"><h1>CHARTLEAP</h1></div>
         <nav>
-            <a href="index.html" aria-label="Home"><button class="nav-btn">🏠 Home</button></a>
-            <a href="graph.html" aria-label="Graph Plotter"><button class="nav-btn">📈 Graph Plotter</button></a>
-            <a href="simulations.html" aria-label="Simulations"><button class="nav-btn">🔬 Simulations</button></a>
-            <a href="notes.html" aria-label="Notes"><button class="nav-btn">📝 Notes</button></a>
-            <a href="test.html" aria-label="Tests"><button class="nav-btn">📋 Test</button></a>
+            <a href="index.html">HOME</a>
+            <a href="graph.html">GRAPH</a>
+            <a href="simulations.html">SIMULATIONS</a>
+            <a href="notes.html">NOTES</a>
+            <a href="test.html">TEST</a>
         </nav>
     </header>
 
     <main>
-        <h1 style="text-align:center; margin:40px 0; color:var(--primary); font-size:2.5rem;">
-            Interactive Physics Simulations & Virtual Lab
-        </h1>
-        
-        <div class="search-container" style="max-width: 600px; margin: auto; padding: 0 20px;">
-            <p style="text-align: center; color: #666;">Search for simulations like 'Ohm', 'Gauss', or 'Mirror'</p>
-            <input type="text" id="search-bar" placeholder="Search simulations... (गोलीय, ओम, कूलॉम, आदि)" style="width: 100%; padding: 12px; border-radius: 25px; border: 1px solid #ccc;">
-        </div>
+        <section>
+            <h1>VIRTUAL_LAB_CORE</h1>
+            <div class="subtitle">Interactive Physics Simulations • Prototype 2026</div>
 
-        <section style="max-width: 1000px; margin: 40px auto; padding: 0 20px; text-align: center; color: #444;">
-            <p>Welcome to the <strong>ChartLeap Virtual Science Lab</strong>. Our interactive 3D simulations are designed to help Class 10, 11, and 12 students visualize complex physics theories. Whether you are studying for boards or competitive exams, these tools make learning intuitive and fun.</p>
-        </section>
+            <input type="text" id="search-bar" placeholder="SEARCH_SYSTEM (गोलीय, ओम, कूलॉम, आदि)...">
 
-        <div id="simulation-list">
+            <div id="simulation-list">
             <div class="simulation-item">
                 <h2>गोलीय दर्पण द्वारा प्रतिबिंब निर्माण<br><small>Spherical Mirror Image Formation</small></h2>
                 <a href="goliydarpan-dvara-pratibimb-ka-banna.html" target="_blank" class="simulation-link">
@@ -150,36 +168,40 @@
                     <img src="PHF.png" alt="Physics Formula Sheet PDF" loading="lazy">
                 </a>
             </div>
-        </div>
+
+                </div>
+        </section>
     </main>
 
     <footer>
-        <div style="max-width: 1200px; margin: auto; padding: 20px;">
-            <h3 style="margin-bottom: 15px;">ChartLeap</h3>
-            <hr style="border: 0; border-top: 1px solid #444; margin: 20px 0;">
-            <div style="margin-bottom: 20px;">
-                <a href="/about-us" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 14px;">About Us</a>
-                <a href="/privacy-policy" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 14px;">Privacy Policy</a>
-                <a href="/terms-and-conditions" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 14px;">Terms & Conditions</a>
-                <a href="/contact-us" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 14px;">Contact Us</a>
-                <a href="/Disclaimer.html" style="color: #fff; text-decoration: none; margin: 0 15px; font-size: 14px;">Disclaimer</a>
-            </div>
-            <p style="font-size: 13px; color: #888; margin: 0;">&copy; 2026 ChartLeap (chartleap.online). Built for Students.</p>
-        </div>
-    </footer>
+        <p>&copy; 2026 ChartLeap. All virtual assets optimized for educational search.</p>
+        <a href="/privacy-policy">Privacy</a>
+        <a href="/Disclaimer.html">Disclaimer</a>
+    </header>
 
-    <div class="feedback-float" id="feedback-float">Feedback</div>
-    <div class="feedback-modal" id="feedback-modal">
-        <div class="modal-content">
-            <span class="close-btn" id="close-modal">×</span>
-            <h2>ChartLeap को रेटिंग दें</h2>
-            <div class="star-rating">
-                <span class="star" data-value="1">★</span><span class="star" data-value="2">★</span><span class="star" data-value="3">★</span><span class="star" data-value="4">★</span><span class="star" data-value="5">★</span>
-            </div>
-            <textarea id="feedback-message" rows="4" placeholder="कोई सुझाव? 😊"></textarea>
-            <button id="submit-feedback">Submit Feedback</button>
-        </div>
-    </div>
-    <script src="script.js"></script>
+    <script>
+        // Star Animation & Search Logic (Same as previous script)
+        const canvas = document.getElementById('star-canvas');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+        function initStars() {
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            stars = [];
+            for(let i=0; i<150; i++) stars.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, s: Math.random()*2});
+        }
+        function animate() {
+            ctx.clearRect(0,0,canvas.width, canvas.height); ctx.fillStyle = "#00f2fe";
+            stars.forEach(s => { ctx.beginPath(); ctx.arc(s.x, s.y, s.s, 0, Math.PI*2); ctx.fill(); s.y += 0.5; if(s.y > canvas.height) s.y = 0; });
+            requestAnimationFrame(animate);
+        }
+        initStars(); animate();
+
+        document.getElementById('search-bar').addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            document.querySelectorAll('.simulation-item').forEach(item => {
+                item.style.display = item.innerText.toLowerCase().includes(term) ? 'block' : 'none';
+            });
+        });
+    </script>
 </body>
 </html>
