@@ -3,236 +3,473 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChartLeap - Ultimate 3D Void</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
-    <meta name="google-site-verification" content="9Qb5QNXaarNglQDEaX3zFaHZaB21DIhrbnIuL4kihFI" />
+    <title>ChartLeap — Next-Gen Interactive Learning</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        body { margin: 0; background: #000; overflow: hidden; font-family: 'Montserrat', sans-serif; color: white; }
-        
-        #three-container { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; 
+        :root {
+            --bg: #030712;
+            --surface: rgba(15, 23, 42, 0.65);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(56, 189, 248, 0.3);
+            --primary: #38bdf8;
+            --primary-glow: rgba(56, 189, 248, 0.25);
+            --accent: #818cf8;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
         }
 
-        /* Glassmorphism Header */
-        header {
-            position: fixed; top: 0; width: 100%; height: 80px;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(15px);
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 0 5%; z-index: 100;
-            border-bottom: 1px solid rgba(0, 242, 254, 0.2);
+        * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            scroll-behavior: smooth;
         }
 
-        .logo h1 { 
-            font-family: 'Cinzel', serif; color: #00f2fe; margin: 0; 
-            font-size: 1.8rem; letter-spacing: 4px;
-            text-shadow: 0 0 20px rgba(0, 242, 254, 0.8);
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
         }
 
-        nav ul { display: flex; gap: 35px; list-style: none; margin: 0; }
-        nav ul li a { 
-            color: #fff; text-decoration: none; font-weight: 600; 
-            font-size: 0.85rem; letter-spacing: 2px; transition: 0.4s;
-            opacity: 0.7;
-        }
-        nav ul li a:hover { opacity: 1; color: #00f2fe; text-shadow: 0 0 10px #00f2fe; }
-
-        /* Hero Section */
-        .hero { 
-            height: 100vh; display: flex; flex-direction: column; 
-            justify-content: center; align-items: center; text-align: center; 
-            pointer-events: none; user-select: none;
-        }
-        .hero h2 { 
-            font-family: 'Cinzel', serif; font-size: clamp(3rem, 12vw, 8rem); 
-            margin: 0; line-height: 1;
-            background: linear-gradient(to bottom, #fff, #00f2fe);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 30px rgba(0, 242, 254, 0.5));
-        }
-        .hero p { 
-            color: #00f2fe; font-size: clamp(0.7rem, 2vw, 1.2rem); 
-            letter-spacing: 12px; margin-top: 10px; opacity: 0.8;
-            text-transform: uppercase;
+        #canvas-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
         }
 
-        /* Simple Scanline Effect */
-        body::after {
-            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-            background-size: 100% 4px, 3px 100%; pointer-events: none; z-index: 99;
+        /* Ambient Glow Blobs */
+        .ambient-glow {
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            filter: blur(140px);
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.2;
         }
-        .logo{
+        .glow-1 { top: -100px; left: -100px; background: #38bdf8; }
+        .glow-2 { bottom: -100px; right: -100px; background: #818cf8; }
+
+        /* Modern Floating Nav */
+        header {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 1150px;
+            height: 64px;
+            background: var(--surface);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 9999px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            z-index: 100;
+            transition: border-color 0.3s ease;
+        }
+        header:hover {
+            border-color: var(--border-hover);
+        }
+
+        .brand {
             display: flex;
             align-items: center;
-            font-family: 'Cinzel', serif;
-            font-size: 2.3rem;
-            color: #d4af37;
-            text-shadow: 0 3px 12px rgba(212,175,55,0.5);
-
+            gap: 12px;
+            text-decoration: none;
         }
-        .logo img { width: 60px; height: 60px; margin-right: 12px; border-radius: 50%; }
+        .brand img {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.15);
+            object-fit: cover;
+        }
+        .brand-text {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: #fff;
+            letter-spacing: -0.5px;
+        }
+        .brand-text span {
+            color: var(--primary);
+        }
+
+        nav ul {
+            display: flex;
+            gap: 8px;
+            list-style: none;
+        }
+        nav ul li a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 999px;
+            transition: all 0.2s ease;
+        }
+        nav ul li a:hover, nav ul li a.active {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Hero */
+        .hero {
+            position: relative;
+            z-index: 10;
+            min-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 120px 20px 40px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            background: rgba(56, 189, 248, 0.08);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 24px;
+        }
+        .badge span {
+            width: 7px;
+            height: 7px;
+            background: var(--primary);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--primary);
+        }
+
+        .hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2.4rem, 6vw, 4.5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -1.5px;
+            max-width: 900px;
+            margin-bottom: 20px;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #ffffff 40%, var(--primary) 80%, var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            color: var(--text-muted);
+            max-width: 600px;
+            line-height: 1.6;
+            margin-bottom: 36px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: #fff;
+            color: #000;
+            padding: 14px 28px;
+            border-radius: 9999px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.15);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.4);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.04);
+            color: #fff;
+            padding: 14px 28px;
+            border-radius: 9999px;
+            border: 1px solid var(--border);
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-decoration: none;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+        }
+
+        /* Quick-Access Grid */
+        .features {
+            position: relative;
+            z-index: 10;
+            max-width: 1150px;
+            margin: 0 auto 100px;
+            padding: 0 24px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 24px;
+            text-decoration: none;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(56, 189, 248, 0.1), transparent 40%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-hover);
+        }
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .icon-box {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: rgba(56, 189, 248, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        .card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+        .card p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 0 16px;
+            }
+            nav ul {
+                display: none; /* Can be swapped with mobile menu toggle */
+            }
+        }
     </style>
 </head>
 <body>
 
-    <div id="three-container"></div>
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+
+    <div id="canvas-bg"></div>
 
     <header>
-        <div class="logo"> 
-            <img src="logo.png" alt="chartleap logo ">
-            <h1>CHARTLEAP</h1> 
-        </div>
+        <a href="index.html" class="brand">
+            <img src="logo.png" alt="ChartLeap Logo">
+            <div class="brand-text">CHART<span>LEAP</span></div>
+        </a>
         <nav>
             <ul>
-                <li><a href="index.html">HOME</a></li>
-                <li><a href="graph.html"> Graph</a></li>
-                <li><a href="simulations.html">LAB</a></li>
-                <li><a href="notes.html">NOTES</a></li>
-                <li><a href="test.html">TEST</a></li>
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="graph.html">Graph Plotter</a></li>
+                <li><a href="simulations.html">Interactive Lab</a></li>
+                <li><a href="notes.html">Notes</a></li>
+                <li><a href="test.html">Mock Test</a></li>
             </ul>
         </nav>
     </header>
 
-    <section class="hero">
-        <h2>CHARTLEAP</h2>
-        <p>Deep Learning Void</p>
-    </section>
+    <main>
+        <section class="hero">
+            <div class="badge">
+                <span></span> Next-Gen Educational Sandbox
+            </div>
+            <h1>Visual Learning, <br><span class="gradient-text">Engineered For Clarity.</span></h1>
+            <p>High-precision 2D/3D math visualizers, physics simulations, formula cheat sheets, aur real-time exam practice ek hi clean interface par.</p>
+            <div class="hero-actions">
+                <a href="graph.html" class="btn-primary">Launch Visualizer <i class="fa-solid fa-arrow-right"></i></a>
+                <a href="simulations.html" class="btn-secondary"><i class="fa-solid fa-flask"></i> Explore 3D Labs</a>
+            </div>
+        </section>
+
+        <section class="features">
+            <a href="graph.html" class="card">
+                <div class="icon-box"><i class="fa-solid fa-chart-line"></i></div>
+                <h3>Graph Visualizer</h3>
+                <p>Functions, parametric plots aur dynamic curve simulations with precision rendering.</p>
+            </a>
+            <a href="simulations.html" class="card">
+                <div class="icon-box"><i class="fa-solid fa-atom"></i></div>
+                <h3>Physics Labs</h3>
+                <p>Interactive 3D field visualizations, optics, ray diagrams aur circuit simulations.</p>
+            </a>
+            <a href="notes.html" class="card">
+                <div class="icon-box"><i class="fa-solid fa-book-bookmark"></i></div>
+                <h3>Smart Notes</h3>
+                <p>Curated board & polytechnic exam formula sheets aur high-yield revision topics.</p>
+            </a>
+            <a href="test.html" class="card">
+                <div class="icon-box"><i class="fa-solid fa-stopwatch-20"></i></div>
+                <h3>Mock Tests</h3>
+                <p>Speed drills, topic-wise practice questions aur instant analytical scoring.</p>
+            </a>
+        </section>
+    </main>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
     <script>
-        let scene, camera, renderer, stars, snake, buildings = [];
+        // Subtle Mouse-glow on Cards
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+                card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+            });
+        });
+
+        // Interactive Three.js Particle Grid
+        let scene, camera, renderer, particles;
         let mouseX = 0, mouseY = 0;
+        const count = 1800;
 
-        function init() {
+        function init3D() {
+            const container = document.getElementById('canvas-bg');
             scene = new THREE.Scene();
-            scene.fog = new THREE.FogExp2(0x000000, 0.015);
-
-            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
-            camera.position.z = 60;
+            camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 120;
 
             renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(window.devicePixelRatio);
-            document.getElementById('three-container').appendChild(renderer.domElement);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.appendChild(renderer.domElement);
 
-            createStars();
-            createSnake();
-            createCity();
-            createLights();
+            const geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(count * 3);
+            const scales = new Float32Array(count);
 
-            window.addEventListener('mousemove', onMouseMove);
-            window.addEventListener('resize', onWindowResize);
+            let i = 0;
+            for (let ix = 0; ix < 60; ix++) {
+                for (let iy = 0; iy < 30; iy++) {
+                    positions[i] = ix * 8 - 240;
+                    positions[i + 1] = 0;
+                    positions[i + 2] = iy * 8 - 120;
+                    scales[i / 3] = 1;
+                    i += 3;
+                }
+            }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('scale', new THREE.BufferAttribute(scales, 1));
+
+            const material = new THREE.PointsMaterial({
+                color: 0x38bdf8,
+                size: 2.2,
+                transparent: true,
+                opacity: 0.35,
+                blending: THREE.AdditiveBlending
+            });
+
+            particles = new THREE.Points(geometry, material);
+            particles.position.y = -25;
+            particles.rotation.x = 0.3;
+            scene.add(particles);
+
+            window.addEventListener('mousemove', e => {
+                mouseX = (e.clientX - window.innerWidth / 2) * 0.05;
+                mouseY = (e.clientY - window.innerHeight / 2) * 0.05;
+            });
+
+            window.addEventListener('resize', onResize);
             animate();
         }
 
-        function createStars() {
-            const geo = new THREE.BufferGeometry();
-            const pos = [];
-            for (let i = 0; i < 10000; i++) {
-                pos.push(THREE.MathUtils.randFloatSpread(1000), THREE.MathUtils.randFloatSpread(1000), THREE.MathUtils.randFloatSpread(1000));
-            }
-            geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
-            const mat = new THREE.PointsMaterial({ color: 0x00f2fe, size: 0.7, transparent: true, opacity: 0.8 });
-            stars = new THREE.Points(geo, mat);
-            scene.add(stars);
-        }
-
-        function createSnake() {
-            const curve = new THREE.CatmullRomCurve3([
-                new THREE.Vector3(-40, 0, -20),
-                new THREE.Vector3(-20, 15, 0),
-                new THREE.Vector3(0, -15, 10),
-                new THREE.Vector3(20, 15, 0),
-                new THREE.Vector3(40, 0, -20)
-            ]);
-            const geo = new THREE.TubeGeometry(curve, 150, 0.8, 16, false);
-            const mat = new THREE.MeshPhongMaterial({ 
-                color: 0x00f2fe, 
-                emissive: 0x006677, 
-                wireframe: true,
-                shininess: 100 
-            });
-            snake = new THREE.Mesh(geo, mat);
-            scene.add(snake);
-        }
-
-        function createCity() {
-            const group = new THREE.Group();
-            for (let i = 0; i < 120; i++) {
-                const h = Math.random() * 25 + 5;
-                const geo = new THREE.BoxGeometry(2, h, 2);
-                const mat = new THREE.MeshPhongMaterial({ 
-                    color: 0x001122, 
-                    emissive: 0x002233, 
-                    wireframe: true, 
-                    transparent: true, 
-                    opacity: 0.4 
-                });
-                const b = new THREE.Mesh(geo, mat);
-                b.position.set(Math.random() * 200 - 100, -25, Math.random() * 150 - 100);
-                b.userData.originalY = b.position.y;
-                b.userData.speed = Math.random() * 0.02;
-                buildings.push(b);
-                group.add(b);
-            }
-            scene.add(group);
-        }
-
-        function createLights() {
-            const ambient = new THREE.AmbientLight(0x404040, 2);
-            scene.add(ambient);
-
-            const spot = new THREE.SpotLight(0x00f2fe, 3);
-            spot.position.set(0, 50, 50);
-            spot.angle = 0.5;
-            spot.penumbra = 0.5;
-            scene.add(spot);
-        }
-
-        function onMouseMove(e) {
-            mouseX = (e.clientX - window.innerWidth / 2) / 100;
-            mouseY = (e.clientY - window.innerHeight / 2) / 100;
-        }
-
-        function onWindowResize() {
+        function onResize() {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         }
 
+        let step = 0;
         function animate() {
             requestAnimationFrame(animate);
-            const time = Date.now() * 0.001;
+            step += 0.03;
 
-            // Snake Movement
-            snake.rotation.y = time * 0.2;
-            snake.position.y = Math.sin(time) * 2;
+            const positions = particles.geometry.attributes.position.array;
+            let i = 0;
+            for (let ix = 0; ix < 60; ix++) {
+                for (let iy = 0; iy < 30; iy++) {
+                    positions[i + 1] = (Math.sin((ix + step) * 0.3) * 5) + (Math.sin((iy + step) * 0.5) * 5);
+                    i += 3;
+                }
+            }
+            particles.geometry.attributes.position.needsUpdate = true;
 
-            // City "Breathing"
-            buildings.forEach(b => {
-                b.position.y = b.userData.originalY + Math.sin(time + b.position.x) * 2;
-            });
-
-            // Stars Movement
-            stars.rotation.z += 0.0005;
-            stars.position.z += 0.5;
-            if(stars.position.z > 200) stars.position.z = 0;
-
-            // Camera Follow Mouse
-            camera.position.x += (mouseX - camera.position.x) * 0.05;
-            camera.position.y += (-mouseY - camera.position.y) * 0.05;
-            camera.lookAt(scene.position);
+            camera.position.x += (mouseX - camera.position.x) * 0.02;
+            camera.position.y += (-mouseY - camera.position.y) * 0.02;
+            camera.lookAt(0, -10, 0);
 
             renderer.render(scene, camera);
         }
 
-        init();
+        init3D();
     </script>
 </body>
 </html>
